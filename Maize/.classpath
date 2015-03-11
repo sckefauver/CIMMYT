@@ -270,5 +270,6 @@
 	<classpathentry kind="lib" path="C:/Users/George/Programs/Fiji.app/plugins/View5D_-1.3.1.jar"/>
 	<classpathentry kind="lib" path="C:/Users/George/Programs/Fiji.app/plugins/Volume_Calculator-1.0.1.jar"/>
 	<classpathentry kind="lib" path="C:/Users/George/Programs/Fiji.app/plugins/Volume_Viewer-2.01.1.jar"/>
+	<classpathentry kind="lib" path="libs/tablelayout.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
