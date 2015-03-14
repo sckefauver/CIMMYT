@@ -4,7 +4,8 @@ import java.awt.Frame;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.KeyEvent;
-
+import java.net.URL;
+import javax.swing.ImageIcon;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -143,5 +144,33 @@ public final class UITool {
                 menuItem.setMnemonic(KeyEvent.VK_P);
                 menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK));
                 popupMenu.add(menuItem);
+        }
+        
+        /**
+         * 
+         * @param name - the name of the image
+         * @return the icon as an {@link ImageIcon} object
+         */
+        public static ImageIcon getImageIcon(String name) {
+                ImageIcon imageIcon = null;
+                URL iconURL = getIconPath(name); 
+                
+                if(iconURL != null) {
+                        imageIcon = new ImageIcon(iconURL);
+                }
+                
+                return imageIcon;
+        }
+        
+        /**
+         * <p>Returns the URL of an ImageIcon given its name.</p>
+         * 
+         * @param iconName - the name of the icon
+         * @return the {@link URL} of the icon
+         */
+        public static URL getIconPath(String iconName) {
+                URL iconURL = null;
+                iconURL = UITool.class.getResource(iconName);
+                return iconURL;
         }
 }

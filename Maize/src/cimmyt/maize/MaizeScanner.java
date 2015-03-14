@@ -15,8 +15,8 @@ public class MaizeScanner implements PlugIn {
 
         @Override
         public void run(String arg) {
-                if (IJ.versionLessThan("1.49f")) {
-                        IJ.showMessage("This plugin needs to run on ImageJ v1.49f and above");
+                if (IJ.versionLessThan("1.49m")) {
+                        IJ.showMessage("This plugin needs to run on ImageJ v1.49m and above");
                 }
                 else {
                         try {

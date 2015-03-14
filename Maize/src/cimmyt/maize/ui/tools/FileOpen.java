@@ -122,6 +122,9 @@ public final class FileOpen {
                 if (fileFilterExtensions == null) {
                         fileFilterExtensions = new String[] { "*" };
                 }
+                
+                FileNameExtensionFilter filter = new FileNameExtensionFilter(fileFilterDesc, fileFilterExtensions);
+                chooser.setFileFilter(filter);
 
                 int result = chooser.showOpenDialog(null);
 
