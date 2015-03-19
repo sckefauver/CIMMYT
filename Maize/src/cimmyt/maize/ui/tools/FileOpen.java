@@ -33,7 +33,7 @@ public final class FileOpen {
          * @param fileFilterExtensions an array of extensions to filter
          * @return File the selected file or null if not selected or canceled
          */
-        public static File getFile(String title, String currentDirectory, int fileSelectionMode, String fileFilterDesc, String ... fileFilterExtensions) {
+        public static final File getFile(String title, String currentDirectory, int fileSelectionMode, String fileFilterDesc, String ... fileFilterExtensions) {
                 JFileChooser chooser = new JFileChooser();
 
                 if (title == null) {
@@ -95,7 +95,7 @@ public final class FileOpen {
          * @param fileFilterExtensions an array of extensions to filter
          * @return File[] the selected files or null if nothing selected or canceled
          */
-        public static File[] getFiles(String title, String currentDirectory, int fileSelectionMode, String fileFilterDesc, String... fileFilterExtensions) {
+        public static final File[] getFiles(String title, String currentDirectory, int fileSelectionMode, String fileFilterDesc, String... fileFilterExtensions) {
                 JFileChooser chooser = new JFileChooser();
 
                 if (title == null) {

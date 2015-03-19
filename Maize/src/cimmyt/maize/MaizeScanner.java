@@ -20,8 +20,7 @@ public class MaizeScanner implements PlugIn {
                 }
                 else {
                         try {
-                                UIManager.setLookAndFeel(UIManager
-                                                .getSystemLookAndFeelClassName());
+                                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
                         }
                         catch (Exception e) {
                                 // Will use the standard Look&Feel

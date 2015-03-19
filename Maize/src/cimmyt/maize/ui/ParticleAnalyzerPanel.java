@@ -1,14 +1,13 @@
 package cimmyt.maize.ui;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.Box;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
+import cimmyt.maize.options.ParticleAnalysisOptions;
 import cimmyt.maize.ui.events.Events;
 
 /**
@@ -85,12 +84,21 @@ public class ParticleAnalyzerPanel extends JPanel {
                 }
         }
         
-        public static final void main(String ... args) {
-                JFrame frame = new JFrame();
-                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                frame.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
-                frame.add(new ParticleAnalyzerPanel());
-                frame.setSize(800, 600);
-                frame.setVisible(true);
+        public final ParticleAnalysisOptions[] getOptions() {
+                ParticleAnalysisOptions[] options = new ParticleAnalysisOptions[optionsList.size()];
+                for(int i=0; i < optionsList.size(); i++) {
+                        options[i] = optionsList.get(i).getAnalysisOptions();
+                }
+                
+                return options;
+        }
+        
+        @Override
+        public void setEnabled(boolean enabled) {
+                for (int i = 0; i < optionsList.size(); i++) {
+                        optionsList.get(i).setEnabled(enabled);
+                }
+                
+                super.setEnabled(enabled);
         }
 }

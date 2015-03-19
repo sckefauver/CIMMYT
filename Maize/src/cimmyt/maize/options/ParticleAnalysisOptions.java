@@ -1,4 +1,4 @@
-package cimmyt.maize.ui;
+package cimmyt.maize.options;
 
 /**
  * 
@@ -6,15 +6,17 @@ package cimmyt.maize.ui;
  * Created on: Mar 14, 2015
  *
  */
-public class AnalysisOptions {
+public class ParticleAnalysisOptions implements AnalysisOptions {
 
         private double minParticleSize = 0.0;
         private double maxParticleSize = 0.0;
         private double minParticleCirc = 0.0;
         private double maxParticleCirc = 0.0;
         private boolean isMaxParticleSizeInfinity = false;
+        private boolean saveOverlays = false;
+        private String saveOverlayDir = null;
 
-        public AnalysisOptions() {
+        public ParticleAnalysisOptions() {
 
         }
         
@@ -56,5 +58,21 @@ public class AnalysisOptions {
 
         public void setMaxParticleSizeInfinity(boolean isMaxParticleSizeInfinity) {
                 this.isMaxParticleSizeInfinity = isMaxParticleSizeInfinity;
+        }
+
+        public final boolean isSaveOverlays() {
+                return saveOverlays;
+        }
+
+        public final void setSaveOverlays(boolean saveOverlays) {
+                this.saveOverlays = saveOverlays;
+        }
+
+        public final String getSaveOverlayDir() {
+                return saveOverlayDir;
+        }
+
+        public final void setSaveOverlayDir(String saveOverlayDir) {
+                this.saveOverlayDir = saveOverlayDir;
         }
 }

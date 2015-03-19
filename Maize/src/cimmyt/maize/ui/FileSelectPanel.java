@@ -62,6 +62,10 @@ public class FileSelectPanel extends JPanel {
                 return selectedFiles;
         }
         
+        public final boolean isEmpty() {
+                return selectedFiles == null;
+        }
+        
         public final void clear() {
                 selectedFiles = null;
                 dirField.setText("");
