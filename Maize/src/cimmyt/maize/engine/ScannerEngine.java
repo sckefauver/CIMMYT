@@ -2,6 +2,7 @@ package cimmyt.maize.engine;
 
 import ij.IJ;
 import ij.ImagePlus;
+import ij.WindowManager;
 import ij.gui.Overlay;
 import ij.gui.Roi;
 import ij.measure.Measurements;
@@ -11,19 +12,26 @@ import ij.plugin.filter.ParticleAnalyzer;
 import ij.plugin.filter.RankFilters;
 import ij.plugin.frame.RoiManager;
 import ij.process.ImageConverter;
+import ij.text.TextPanel;
+import ij.text.TextWindow;
 import java.awt.Color;
+import java.awt.Window;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import cimmyt.maize.options.AnalysisOptions;
 import cimmyt.maize.options.ClaheOptions;
 import cimmyt.maize.options.Options;
+import cimmyt.maize.options.ParticleAnalysisDefaultOptions;
 import cimmyt.maize.options.ParticleAnalysisOptions;
 import cimmyt.maize.options.ProcessOptions;
 import cimmyt.maize.options.RemoveOutlierOptions;
 import cimmyt.maize.options.SubtractBackgroundOptions;
 import cimmyt.maize.options.ThresholdOptions;
-import cimmyt.maize.ui.MaizeFrame;
+import cimmyt.maize.ui.analysis.SummaryResults;
 
 /**
  * 
@@ -35,10 +43,14 @@ public class ScannerEngine {
 
         private List<ProcessOptions> processOptionsList = new ArrayList<ProcessOptions>();
         private List<AnalysisOptions> analysisOptionsList = new ArrayList<AnalysisOptions>();
+        private ParticleAnalysisDefaultOptions defaultAnalysisOptions = null;
         private File[] selectedFiles = null;
-        @SuppressWarnings("unused")
-        private MaizeFrame parentFrame = null;
         private RoiManager roiManager = null;
+        
+        private static final int CLEAR_SUMMARY_MAX = 800;
+        private BufferedWriter summaryWriter = null;
+        private int summaryLineCounter = 0;
+        private boolean printSummaryHeadings = true;
         
         public ScannerEngine() {
                 
@@ -52,14 +64,6 @@ public class ScannerEngine {
                 roiManager.setVisible(false);
                 roiManager.close();
                 roiManager.dispose();
-        }
-        
-        public final void setParentFrame(MaizeFrame parentFrame) throws NullPointerException {
-                if(parentFrame == null) {
-                        throw new NullPointerException("parentFrame cannot be null");
-                }
-                
-                this.parentFrame = parentFrame;
         }
         
         public final void addProcessOption(ProcessOptions processOptions) throws NullPointerException {
@@ -86,26 +90,99 @@ public class ScannerEngine {
                 this.selectedFiles = selectedFiles;
         }
         
-        public final void processBatch() {
-                createRoiManager();
-                
-                File imageFile = null;
-                ImagePlus image = null;
-                for(int i=0; i < selectedFiles.length; i++) {
-                        imageFile = selectedFiles[i];
-                        image = openImage(imageFile);
-                        
-                        if(image != null) {
-                                processImage(imageFile, image);
-                                analyzeImage(imageFile, image);
-                                
-                                image.unlock();
-                                image.flush();
-                                image = null;
-                        }
+        public final void setDefaultAnalysisOptions(ParticleAnalysisDefaultOptions defaultAnalysisOptions) {
+                this.defaultAnalysisOptions = defaultAnalysisOptions; 
+        }
+        
+        public final boolean hasDefaultAnalysisOptions() {
+                return defaultAnalysisOptions != null;
+        }
+        
+        private final void openStreams() throws IOException {
+                if (defaultAnalysisOptions.isSaveSummaries()) {
+                        summaryWriter = new BufferedWriter(new FileWriter(defaultAnalysisOptions.getSaveSummaryFile()));
+                        summaryLineCounter = 0;
                 }
+        }
+        
+        private final void closeStreams() {
+                if (summaryWriter != null) {
+                        try {
+                                summaryWriter.flush();
+                                summaryWriter.close();
+                        }
+                        catch (Exception ex) {}
+                        summaryWriter = null;
+                }
+        }
+        
+        private final void closeSummaryWindow() {
+                if(defaultAnalysisOptions.isSaveSummaries()) {
+                        Window window = WindowManager.getWindow("Summary");
+                        window.setVisible(false);
+                        TextWindow txtWin = (TextWindow) window;
+                        txtWin.getTextPanel().clear();
+                        txtWin.close();
+                        txtWin = null;
+                        window.dispose();
+                        window = null;
+                }
+        }
+        
+        /**
+         * Perform a cleanup of the summary window every clearSummaries time.
+         * This will cause a small visual anomaly of a window appearing and then
+         * disappearing very quickly. This is done because calling the method
+         * to delete all the lines while the window is still visible does not
+         * work. So the window has to physically close and disposed of in memory.
+         * A garbage collection is then hinted at to keep memory consumption low.
+         */
+        private final void cleanUpSummaryWindow() {
+                if (summaryLineCounter >= CLEAR_SUMMARY_MAX) {
+                        summaryLineCounter = 0;
+                        Window window = WindowManager.getWindow("Summary");
+                        window.setVisible(false);
+                        TextWindow txtWin = (TextWindow) window;
+                        txtWin.getTextPanel().clear();
+                        txtWin.close();
+                        txtWin = null;
+                        window.dispose();
+                        window = null;
+                        System.gc();
+                }
+        }
+        
+        public final void processBatch() throws IOException {
+                createRoiManager();
+                openStreams();
                 
-                destroyRoiManager();
+                try {
+                        File imageFile = null;
+                        ImagePlus image = null;
+                        for(int i=0; i < selectedFiles.length; i++) {
+                                imageFile = selectedFiles[i];
+                                image = openImage(imageFile);
+                                
+                                if(image != null) {
+                                        processImage(imageFile, image);
+                                        analyzeImage(imageFile, image);
+                                        
+                                        image.unlock();
+                                        image.flush();
+                                        image = null;
+                                }
+                        }
+                
+                }
+                catch(IOException ioe) {
+                        ioe.printStackTrace();
+                        IJ.error("I/O Error", "Error while writing to summary file.");
+                }
+                finally {
+                        closeSummaryWindow();
+                        destroyRoiManager();
+                        closeStreams();
+                }
         }
         
         private final void processImage(File imageFile, ImagePlus image) {
@@ -143,7 +220,7 @@ public class ScannerEngine {
                 }
         }
         
-        private final void analyzeImage(File imageFile, ImagePlus image) {
+        private final void analyzeImage(File imageFile, ImagePlus image) throws IOException {
                 int options = ParticleAnalyzer.EXCLUDE_EDGE_PARTICLES +
                               ParticleAnalyzer.CLEAR_WORKSHEET +
                               ParticleAnalyzer.DISPLAY_SUMMARY +
@@ -169,6 +246,10 @@ public class ScannerEngine {
                                     Measurements.AREA_FRACTION +
                                     Measurements.CIRCULARITY;
                 
+                if(defaultAnalysisOptions.isSaveSummaries()) {
+                        cleanUpSummaryWindow();
+                }
+                
                 for (int i=0; i < analysisOptionsList.size(); i++) {
                         AnalysisOptions analysisOption = analysisOptionsList.get(i);
                         ParticleAnalysisOptions pOptions = (ParticleAnalysisOptions)analysisOption;
@@ -191,38 +272,53 @@ public class ScannerEngine {
                         roiManager.reset();
                         analyzer.analyze(image);
                         
-                        if(pOptions.isSaveOverlays()) {
-                                Roi[] rois = roiManager.getRoisAsArray();
-                                Overlay over = new Overlay();
-                                for (int j = 0; j < rois.length; j++) {
-                                        Roi roi = rois[j];
-                                        roi.setStrokeColor(Color.MAGENTA);
-                                        roi.setStrokeWidth(1);
-                                        over.add(roi);
-                                }
-                                
-                                ImagePlus imageDup = image.duplicate();
-                                imageDup.setOverlay(over);
-                                imageDup.updateAndDraw();
-                                
-                                String overlayDir = pOptions.getSaveOverlayDir();
-                                IJ.saveAs(imageDup, "jpg", overlayDir+File.separator+"overlay_"+i+"_"+imageFile.getName());
-                                
-                                imageDup.unlock();
-                                imageDup.flush();
-                                imageDup = null;
-                                
-                                /*
-                                ImagePlus outImg = analyzer.getOutputImage();
-                                if(outImg != null) {
-                                        String overlayDir = pOptions.getSaveOverlayDir();
-                                        IJ.saveAs(outImg, "jpg", overlayDir+File.separator+"overlay_"+i+"_"+imageFile.getName());
+                        if(hasDefaultAnalysisOptions()) {
+                                if(defaultAnalysisOptions.isSaveOverlays()) {
+                                        Roi[] rois = roiManager.getRoisAsArray();
+                                        Overlay over = new Overlay();
+                                        for (int j = 0; j < rois.length; j++) {
+                                                Roi roi = rois[j];
+                                                roi.setStrokeColor(Color.MAGENTA);
+                                                roi.setStrokeWidth(1);
+                                                over.add(roi);
+                                        }
                                         
-                                        outImg.unlock();
-                                        outImg.flush();
-                                        outImg = null;
+                                        ImagePlus imageDup = image.duplicate();
+                                        imageDup.setOverlay(over);
+                                        imageDup.updateAndDraw();
+                                        
+                                        String overlayDir = defaultAnalysisOptions.getSaveOverlaysDir();
+                                        IJ.saveAs(imageDup, "jpg", overlayDir+File.separator+imageFile.getName()+"_overlay_"+i);
+                                        
+                                        imageDup.unlock();
+                                        imageDup.flush();
+                                        imageDup = null;
                                 }
-                                */
+                                
+                                if(defaultAnalysisOptions.isSaveSummaries()) {
+                                        SummaryResults results = new SummaryResults();
+                                        Window window = WindowManager.getWindow("Summary");
+                                        if (window != null) {
+                                                window.setVisible(false);
+                                                TextWindow txtWindow = (TextWindow) window;
+                                                TextPanel txtPanel = txtWindow.getTextPanel();
+                                                String strSummary = txtPanel.getLine(summaryLineCounter);
+                                                if (strSummary != null && !strSummary.isEmpty()) {
+                                                        results.setSummaryHeadings(txtPanel.getColumnHeadings());
+                                                        results.setSummaryLine(strSummary);
+                                                }
+                                        }
+                                        
+                                        summaryLineCounter++;
+                                        
+                                        if (printSummaryHeadings) {
+                                                printSummayHeadings(results);
+                                                printSummaryHeadings = false;
+                                        }
+                                        
+                                        printSummary(results);
+                                        results = null;
+                                }
                         }
                 }
         }
@@ -323,5 +419,36 @@ public class ScannerEngine {
                 }
                 
                 return image;
+        }
+        
+        private final void printSummary(SummaryResults results) throws IOException {
+                String[] summaryLine = results.getSummaryLine();
+                StringBuilder sb = new StringBuilder();
+                for (int j = 0; j < summaryLine.length; j++) {
+                        sb.append(summaryLine[j]);
+                        sb.append('\t');
+                }
+
+                sb.delete(sb.length() - 1, sb.length());
+
+                summaryWriter.write(sb.toString());
+                summaryWriter.write(System.getProperty("line.separator"));
+                summaryWriter.flush();
+                sb = null;
+        }
+        
+        private final void printSummayHeadings(SummaryResults result) throws IOException {
+                String[] summaryHeadings = result.getSummaryHeadings();
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < summaryHeadings.length; i++) {
+                        sb.append(summaryHeadings[i]);
+                        sb.append('\t');
+                }
+
+                sb.delete(sb.length() - 1, sb.length());
+
+                summaryWriter.write(sb.toString());
+                summaryWriter.write(System.getProperty("line.separator"));
+                sb = null;
         }
 }

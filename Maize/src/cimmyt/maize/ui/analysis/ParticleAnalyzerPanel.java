@@ -1,4 +1,4 @@
-package cimmyt.maize.ui;
+package cimmyt.maize.ui.analysis;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -84,7 +84,7 @@ public class ParticleAnalyzerPanel extends JPanel {
                 }
         }
         
-        public final ParticleAnalysisOptions[] getOptions() {
+        public final ParticleAnalysisOptions[] getAnalysisOptions() {
                 ParticleAnalysisOptions[] options = new ParticleAnalysisOptions[optionsList.size()];
                 for(int i=0; i < optionsList.size(); i++) {
                         options[i] = optionsList.get(i).getAnalysisOptions();

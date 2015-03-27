@@ -1,4 +1,4 @@
-package cimmyt.maize.ui;
+package cimmyt.maize.ui.processing;
 
 import java.awt.Color;
 import java.awt.Dimension;

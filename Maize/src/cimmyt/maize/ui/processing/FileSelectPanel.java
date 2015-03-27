@@ -1,4 +1,4 @@
-package cimmyt.maize.ui;
+package cimmyt.maize.ui.processing;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -43,11 +43,7 @@ public class FileSelectPanel extends JPanel {
                 dirOpenButton.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                                selectedFiles = FileOpen.getFiles("Select the maize images", (recentDir == null ? System.getProperty("user.dir") : recentDir), JFileChooser.FILES_ONLY , "Image Files", "jpg","jpeg");
-                                if(selectedFiles != null) {
-                                        recentDir = selectedFiles[0].getParent();
-                                        dirField.setText(selectedFiles.length+" files in "+recentDir);
-                                }
+                                dirOpenButton_actionPerformed();
                         }
                 });
                 
@@ -56,6 +52,14 @@ public class FileSelectPanel extends JPanel {
                 add(dirLabel, BorderLayout.WEST);
                 add(dirField, BorderLayout.CENTER);
                 add(dirOpenButton, BorderLayout.EAST);
+        }
+        
+        private final void dirOpenButton_actionPerformed() {
+                selectedFiles = FileOpen.getFiles("Select the maize images", (recentDir == null ? System.getProperty("user.dir") : recentDir), JFileChooser.FILES_ONLY , "Image Files", "jpg","jpeg");
+                if(selectedFiles != null) {
+                        recentDir = selectedFiles[0].getParent();
+                        dirField.setText(selectedFiles.length+" files in "+recentDir);
+                }
         }
         
         public final File[] getSelectedFiles() {

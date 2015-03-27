@@ -1,5 +1,6 @@
 package cimmyt.maize.ui;
 
+import ij.IJ;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -7,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -14,10 +16,19 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
 import layout.TableLayout;
 import cimmyt.maize.engine.ScannerEngine;
+import cimmyt.maize.options.ParticleAnalysisDefaultOptions;
 import cimmyt.maize.options.ParticleAnalysisOptions;
+import cimmyt.maize.ui.analysis.ParticleAnalyzerDefaultsPanel;
+import cimmyt.maize.ui.analysis.ParticleAnalyzerPanel;
+import cimmyt.maize.ui.processing.ClahePanel;
+import cimmyt.maize.ui.processing.FileSelectPanel;
+import cimmyt.maize.ui.processing.RemoveOutliersPanel;
+import cimmyt.maize.ui.processing.SubtractBackgroundPanel;
+import cimmyt.maize.ui.processing.ThresholdPanel;
 import cimmyt.maize.ui.tools.UITool;
 
 /**
@@ -29,12 +40,17 @@ import cimmyt.maize.ui.tools.UITool;
 public class MaizeFrame extends JFrame {
 
         private static final long serialVersionUID = 6629966401349704225L;
-        private JPanel mainPanel = null;
+        
+        private JTabbedPane tabbedPane = null;
+        private JPanel processingPanel = null;
+        private JPanel analysisPanel = null;
+        
         private FileSelectPanel fileSelectPanel = null;
         private ClahePanel clahePanel = null;
         private SubtractBackgroundPanel subtractBackgroundPanel = null;
         private ThresholdPanel thresholdPanel = null;
         private RemoveOutliersPanel removeOutliersPanel = null;
+        private ParticleAnalyzerDefaultsPanel particleAnalyzerDefaultsPanel = null;
         private ParticleAnalyzerPanel particleAnalyzerPanel = null;
         private JScrollPane particleAnalyzerScrollPane = null;
         
@@ -43,6 +59,7 @@ public class MaizeFrame extends JFrame {
         private JCheckBox enableParticleAnalyzerCheckBox = null;
         private JCheckBox enableThresholdCheckBox = null;
         private JCheckBox enableRemoveOutlisersCheckBox = null;
+        private JCheckBox enableParticleAnalyzerDefaultsCheckBox = null;
         
         private JPanel buttonPanel = null;
         private JButton analyzeButton = null;
@@ -59,6 +76,8 @@ public class MaizeFrame extends JFrame {
                 subtractBackgroundPanel = new SubtractBackgroundPanel();
                 thresholdPanel = new ThresholdPanel();
                 removeOutliersPanel = new RemoveOutliersPanel();
+                
+                particleAnalyzerDefaultsPanel = new ParticleAnalyzerDefaultsPanel();
                 particleAnalyzerPanel = new ParticleAnalyzerPanel();
                 particleAnalyzerScrollPane = new JScrollPane(particleAnalyzerPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
                 
@@ -104,6 +123,14 @@ public class MaizeFrame extends JFrame {
                         }
                 });
                 
+                enableParticleAnalyzerDefaultsCheckBox = new JCheckBox("", false);
+                enableParticleAnalyzerDefaultsCheckBox.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                                particleAnalyzerDefaultsPanel.setEnabled(((JCheckBox)e.getSource()).isSelected());
+                        }
+                });
+                
                 // ---------------------------------------------------
                 
                 analyzeButton = new JButton("Analyze");
@@ -124,7 +151,7 @@ public class MaizeFrame extends JFrame {
                 // ---------------------------------------------------
                 
                 double spacer = 5;
-                double[][] layoutSize = {
+                double[][] processingLayoutSize = {
                                 //                   0,         2
                                 {TableLayout.PREFERRED, spacer, TableLayout.PREFERRED},
                                 {TableLayout.PREFERRED, //0
@@ -140,24 +167,46 @@ public class MaizeFrame extends JFrame {
                                  TableLayout.FILL}      //10
                 };
                 
-                mainPanel = new JPanel(new TableLayout(layoutSize));
-                mainPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-                mainPanel.add(fileSelectPanel,                  "2,  0, 2, 0");
-                mainPanel.add(enableClaheCheckBox,              "0,  2, l, t");
-                mainPanel.add(clahePanel,                       "2,  2      ");
-                mainPanel.add(enableSubtractBackgroundCheckBox, "0,  4, l, t");
-                mainPanel.add(subtractBackgroundPanel,          "2,  4      ");
-                mainPanel.add(enableThresholdCheckBox,          "0,  6, l, t");
-                mainPanel.add(thresholdPanel,                   "2,  6      ");
-                mainPanel.add(enableRemoveOutlisersCheckBox,    "0,  8, l, t");
-                mainPanel.add(removeOutliersPanel,              "2,  8     ");
-                mainPanel.add(enableParticleAnalyzerCheckBox,   "0, 10, l, t");
-                mainPanel.add(particleAnalyzerScrollPane,       "2, 10      ");
+                processingPanel = new JPanel(new TableLayout(processingLayoutSize));
+                processingPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+                processingPanel.add(fileSelectPanel,                  "2,  0, 2, 0");
+                processingPanel.add(enableClaheCheckBox,              "0,  2, l, t");
+                processingPanel.add(clahePanel,                       "2,  2      ");
+                processingPanel.add(enableSubtractBackgroundCheckBox, "0,  4, l, t");
+                processingPanel.add(subtractBackgroundPanel,          "2,  4      ");
+                processingPanel.add(enableThresholdCheckBox,          "0,  6, l, t");
+                processingPanel.add(thresholdPanel,                   "2,  6      ");
+                processingPanel.add(enableRemoveOutlisersCheckBox,    "0,  8, l, t");
+                processingPanel.add(removeOutliersPanel,              "2,  8     ");
+                
+                // ---------------------------------------------------
+                
+                double[][] analysisLayoutSize = {
+                                //                   0,         2
+                                {TableLayout.PREFERRED, spacer, TableLayout.PREFERRED},
+                                {TableLayout.PREFERRED, //0
+                                 spacer,
+                                 TableLayout.FILL}      //2
+                };
+                
+                analysisPanel = new JPanel(new TableLayout(analysisLayoutSize));
+                analysisPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+                analysisPanel.add(enableParticleAnalyzerDefaultsCheckBox, "0, 0, l, t");
+                analysisPanel.add(particleAnalyzerDefaultsPanel,          "2, 0      ");
+                analysisPanel.add(enableParticleAnalyzerCheckBox,         "0, 2, l, t");
+                analysisPanel.add(particleAnalyzerScrollPane,             "2, 2      ");
+                
+                tabbedPane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);
+                tabbedPane.addTab("View", new JPanel());
+                tabbedPane.addTab("Image Processing", processingPanel);
+                tabbedPane.addTab("Image Analysis", analysisPanel);
+                
+                // ---------------------------------------------------
                 
                 setSize(570, 600);
                 setTitle("CIMMYT Maize Scanner");
                 setLayout(new BorderLayout(5, 5));
-                add(mainPanel, BorderLayout.CENTER);
+                add(tabbedPane, BorderLayout.CENTER);
                 add(buttonPanel, BorderLayout.SOUTH);
                 setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
                 addWindowListener(new WindowAdapter() {
@@ -192,7 +241,6 @@ public class MaizeFrame extends JFrame {
                 analyzeButton.setEnabled(false);
                 
                 scannerEngine = new ScannerEngine();
-                scannerEngine.setParentFrame(this);
                 scannerEngine.setSelectedFiles(fileSelectPanel.getSelectedFiles());
                 
                 if(enableClaheCheckBox.isSelected()) {
@@ -212,10 +260,15 @@ public class MaizeFrame extends JFrame {
                 }
                 
                 if(enableParticleAnalyzerCheckBox.isSelected()) {
-                        ParticleAnalysisOptions[] options = particleAnalyzerPanel.getOptions();
+                        ParticleAnalysisOptions[] options = particleAnalyzerPanel.getAnalysisOptions();
                         for (int i = 0; i < options.length; i++) {
                                 scannerEngine.addAnalysisOption(options[i]);
                         }
+                }
+                
+                if(enableParticleAnalyzerDefaultsCheckBox.isSelected()) {
+                        ParticleAnalysisDefaultOptions options = particleAnalyzerDefaultsPanel.getAnalysisOptions();
+                        scannerEngine.setDefaultAnalysisOptions(options);
                 }
                 
                 System.gc();
@@ -223,7 +276,14 @@ public class MaizeFrame extends JFrame {
                 Thread t = new Thread(new Runnable() {
                         @Override
                         public void run() {
-                                scannerEngine.processBatch();
+                                try {
+                                        scannerEngine.processBatch();
+                                }
+                                catch(IOException ioe) {
+                                        ioe.printStackTrace();
+                                        IJ.error("I/O Error", "There was an error while creating the summary file.");
+                                }
+                                
                                 System.gc();
                                 analyzeButton.setEnabled(true);
                         }

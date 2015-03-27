@@ -13,8 +13,6 @@ public class ParticleAnalysisOptions implements AnalysisOptions {
         private double minParticleCirc = 0.0;
         private double maxParticleCirc = 0.0;
         private boolean isMaxParticleSizeInfinity = false;
-        private boolean saveOverlays = false;
-        private String saveOverlayDir = null;
 
         public ParticleAnalysisOptions() {
 
@@ -58,21 +56,5 @@ public class ParticleAnalysisOptions implements AnalysisOptions {
 
         public void setMaxParticleSizeInfinity(boolean isMaxParticleSizeInfinity) {
                 this.isMaxParticleSizeInfinity = isMaxParticleSizeInfinity;
-        }
-
-        public final boolean isSaveOverlays() {
-                return saveOverlays;
-        }
-
-        public final void setSaveOverlays(boolean saveOverlays) {
-                this.saveOverlays = saveOverlays;
-        }
-
-        public final String getSaveOverlayDir() {
-                return saveOverlayDir;
-        }
-
-        public final void setSaveOverlayDir(String saveOverlayDir) {
-                this.saveOverlayDir = saveOverlayDir;
         }
 }

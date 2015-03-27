@@ -1,4 +1,4 @@
-package cimmyt.maize.ui;
+package cimmyt.maize.ui.analysis;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -8,7 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.io.File;
 import java.util.regex.Pattern;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -16,12 +15,10 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.event.EventListenerList;
 import layout.TableLayout;
 import cimmyt.maize.options.ParticleAnalysisOptions;
 import cimmyt.maize.ui.events.Events;
-import cimmyt.maize.ui.tools.FileSave;
 import cimmyt.maize.ui.tools.JCustomTextField;
 import cimmyt.maize.ui.tools.UITool;
 
@@ -48,13 +45,6 @@ public class ParticleAnalyzerOptionsPanel extends JPanel implements ActionListen
         private JCustomTextField circFromField = null;
         private JLabel circToLabel = null;
         private JCustomTextField circToField = null;
-        
-        private JPanel saveOverlaysPanel = null;
-        private JCheckBox saveOverlaysCheckBox = null;
-        private JTextField saveOverlaysField = null;
-        private JButton saveOverlaysButton = null;
-        private File saveOverlayDir = null;
-        private File initialSaveOverlayDir = null;
         
         private JButton addButton = null;
         private JButton delButton = null;
@@ -89,48 +79,6 @@ public class ParticleAnalyzerOptionsPanel extends JPanel implements ActionListen
                 });
                 
                 infinityCheckBox_actionPerformed();
-                
-                // --------------------------------------------------------
-                
-                saveOverlaysCheckBox = new JCheckBox("Save Overlays:", false);
-                saveOverlaysCheckBox.addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                                saveOverlaysField.setEnabled(saveOverlaysCheckBox.isSelected());
-                                saveOverlaysButton.setEnabled(saveOverlaysCheckBox.isSelected());
-                                if(saveOverlaysCheckBox.isSelected()) {
-                                        saveOverlaysField.setBackground(Color.WHITE);
-                                }
-                                else {
-                                        saveOverlaysField.setBackground(null);
-                                }
-                        }
-                });
-                
-                saveOverlaysField = new JTextField(20);
-                saveOverlaysField.setEditable(false);
-                saveOverlaysField.setEnabled(false);
-                
-                saveOverlaysButton = new JButton("...");
-                saveOverlaysButton.setEnabled(false);
-                saveOverlaysButton.addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                                saveOverlayDir = FileSave.saveFile("Select where to save overlays", initialSaveOverlayDir, "Overlay save directory");
-                                if(saveOverlayDir != null) {
-                                        saveOverlaysField.setText(saveOverlayDir.getAbsolutePath());
-                                }
-                                else {
-                                        saveOverlaysField.setText("");
-                                }
-                        }
-                });
-                
-                saveOverlaysPanel = new JPanel(new BorderLayout(5, 5));
-                saveOverlaysPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-                saveOverlaysPanel.add(saveOverlaysCheckBox, BorderLayout.WEST);
-                saveOverlaysPanel.add(saveOverlaysField, BorderLayout.CENTER);
-                saveOverlaysPanel.add(saveOverlaysButton, BorderLayout.EAST);
                 
                 // --------------------------------------------------------
                 
@@ -215,7 +163,6 @@ public class ParticleAnalyzerOptionsPanel extends JPanel implements ActionListen
                 setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5), BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1)));
                 add(optionsPanel, BorderLayout.CENTER);
                 add(buttonPanel, BorderLayout.EAST);
-                add(saveOverlaysPanel, BorderLayout.SOUTH);
         }
         
         public final void setAddButtonEnabled(boolean enable) {
@@ -275,18 +222,12 @@ public class ParticleAnalyzerOptionsPanel extends JPanel implements ActionListen
                 
                 analysisOptions.setMinParticleCirc(Double.parseDouble(minCirc));
                 analysisOptions.setMaxParticleCirc(Double.parseDouble(maxCirc));
-                analysisOptions.setSaveOverlays(saveOverlaysCheckBox.isSelected());
-                
-                if(saveOverlaysCheckBox.isSelected()) {
-                        analysisOptions.setSaveOverlayDir(saveOverlaysField.getText());
-                }
                 
                 return analysisOptions;
         }
         
         private boolean addButtonSavedState = false;
         private boolean delButtonSavedState = false;
-        private boolean overlaySavedState = false;
         
         @Override
         public void setEnabled(boolean enabled) {
@@ -295,26 +236,16 @@ public class ParticleAnalyzerOptionsPanel extends JPanel implements ActionListen
                 infinityCheckBox.setEnabled(enabled);
                 circFromField.setEnabled(enabled);
                 circToField.setEnabled(enabled);
-                saveOverlaysCheckBox.setEnabled(overlaySavedState);
                 
                 if(!enabled) {
                         addButtonSavedState = addButton.isEnabled();
                         delButtonSavedState = delButton.isEnabled();
                         addButton.setEnabled(enabled);
                         delButton.setEnabled(enabled);
-                        
-                        overlaySavedState = saveOverlaysCheckBox.isSelected();
-                        saveOverlaysCheckBox.setEnabled(enabled);
-                        saveOverlaysButton.setEnabled(enabled);
-                        saveOverlaysField.setEnabled(enabled);
                 }
                 else {
                         addButton.setEnabled(addButtonSavedState);
                         delButton.setEnabled(delButtonSavedState);
-                        
-                        saveOverlaysCheckBox.setEnabled(enabled);
-                        saveOverlaysField.setEnabled(overlaySavedState);
-                        saveOverlaysButton.setEnabled(overlaySavedState);
                 }
                 
                 super.setEnabled(enabled);
