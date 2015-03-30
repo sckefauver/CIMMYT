@@ -17,6 +17,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.event.EventListenerList;
 import layout.TableLayout;
+import cimmyt.maize.options.AnalysisOption;
 import cimmyt.maize.options.ParticleAnalysisOptions;
 import cimmyt.maize.ui.events.Events;
 import cimmyt.maize.ui.tools.JCustomTextField;
@@ -55,6 +56,8 @@ public class ParticleAnalyzerOptionsPanel extends JPanel implements ActionListen
         private ParticleAnalysisOptions analysisOptions = new ParticleAnalysisOptions();
         
         public ParticleAnalyzerOptionsPanel() {
+                analysisOptions.setOptionKey(AnalysisOption.PARTICLE_ANALYSIS);
+                
                 sizeLabel = new JLabel("Size:");
                 sizeLabel.setHorizontalAlignment(JLabel.RIGHT);
                 

@@ -6,7 +6,7 @@ package cimmyt.maize.options;
  * Created on: Mar 20, 2015
  *
  */
-public enum Options {
+public enum ProcessOption {
         ENHANCE_LOCAL_CONTRAST,
         SUBTRACT_BACKGROUND,
         THRESHOLD,

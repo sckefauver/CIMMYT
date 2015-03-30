@@ -25,7 +25,7 @@ public final class FileSave {
                 chooser.setDialogTitle(title);
                 
                 if(defaultFileName != null) {
-                        chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+                        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
                         chooser.setSelectedFile(new File(chooser.getCurrentDirectory().getAbsolutePath()+File.separator+defaultFileName));
                 }
                 else {

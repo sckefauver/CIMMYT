@@ -8,7 +8,7 @@ package cimmyt.maize.options;
  */
 public interface ProcessOptions {
 
-        public void setOptionKey(Options optionKey);
+        public void setOptionKey(ProcessOption optionKey);
         
-        public Options getOptionKey();
+        public ProcessOption getOptionKey();
 }

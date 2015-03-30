@@ -1,15 +1,24 @@
 package cimmyt.maize.ui.tools;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Toolkit;
 import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.net.URL;
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.JWindow;
 import javax.swing.KeyStroke;
+import javax.swing.Timer;
+import javax.swing.border.EtchedBorder;
 import javax.swing.text.DefaultEditorKit;
 
 /**
@@ -148,12 +157,12 @@ public final class UITool {
         
         /**
          * 
-         * @param name - the name of the image
+         * @param path - the path and name of the image
          * @return the icon as an {@link ImageIcon} object
          */
-        public static ImageIcon getImageIcon(String name) {
+        public static ImageIcon getImageIcon(String path) {
                 ImageIcon imageIcon = null;
-                URL iconURL = getIconPath(name); 
+                URL iconURL = getIconPath(path); 
                 
                 if(iconURL != null) {
                         imageIcon = new ImageIcon(iconURL);
@@ -163,14 +172,76 @@ public final class UITool {
         }
         
         /**
-         * <p>Returns the URL of an ImageIcon given its name.</p>
+         * <p>Returns the URL of an ImageIcon given its path and name.</p>
          * 
-         * @param iconName - the name of the icon
+         * @param iconPath - the path and name of the icon
          * @return the {@link URL} of the icon
          */
-        public static URL getIconPath(String iconName) {
+        public static URL getIconPath(String iconPath) {
                 URL iconURL = null;
-                iconURL = UITool.class.getResource(iconName);
+                iconURL = UITool.class.getResource(iconPath);
                 return iconURL;
+        }
+        
+        /**
+         * <p>Displays a splash window for <code>duration</code> milliseconds displaying the specified <code>image</code>.</p>
+         * 
+         * @param image
+         *      - the image icon to display
+         * @param duration
+         *      - how long to show the window (milliseconds)
+         * @param windowSize
+         *      - the size of the window
+         * @param frameOwner
+         *      - the parent window or owner, null if none
+         */
+        public static void showSplashWindow(ImageIcon image, int duration, Dimension windowSize, Window frameOwner) {
+                showSplashWindow(image, duration, windowSize, frameOwner, null);
+        }
+        
+        /**
+         * <p>Displays a splash window for <code>duration</code> milliseconds displaying the specified <code>image</code>.
+         * An optional <code>actionListener</code> can be attached to perform a function after the splash window has
+         * closed. If null is specified then the default listener will be used.</p>
+         * 
+         * @param image
+         *      - the image icon to display
+         * @param duration
+         *      - how long to show the window (milliseconds)
+         * @param windowSize
+         *      - the size of the window
+         * @param frameOwner
+         *      - the parent window or owner, null if none
+         * @param actionListener
+         *      - a custom actionListener to be performed after the splash window is closed
+         */
+        public static void showSplashWindow(ImageIcon image, int duration, Dimension windowSize, Window frameOwner, ActionListener actionListener) {
+                JLabel splashImage = new JLabel();
+                splashImage.setHorizontalAlignment(JLabel.CENTER);
+                splashImage.setOpaque(true);
+                splashImage.setIcon(image);
+
+                final JWindow window = new JWindow(frameOwner);
+                window.add(splashImage, BorderLayout.CENTER);
+                window.setSize(windowSize);
+                splashImage.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
+                UITool.center(window);
+                window.setVisible(true);
+                
+                ActionListener defaultActionListener = new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                                window.setVisible(false);
+                                window.dispose();
+                        }
+                };
+                
+                Timer timer = new Timer(duration, defaultActionListener);
+                if(actionListener != null) {
+                        timer.addActionListener(actionListener);
+                }
+
+                timer.setRepeats(false);
+                timer.start();
         }
 }

@@ -115,8 +115,6 @@ public class ParticleAnalyzerDefaultsPanel extends JPanel {
                 setLayout(new TableLayout(layoutSize));
                 add(saveSummaryPanel,  "0, 0");
                 add(saveOverlaysPanel, "0, 2");
-                
-                setEnabled(false);
         }
         
         private final void saveSummaryCheckBox_actionPerformed() {
@@ -163,17 +161,11 @@ public class ParticleAnalyzerDefaultsPanel extends JPanel {
                 }
         }
         
-        public final File getSelectedFile() {
-                return selectedSaveSummaryFile;
-        }
-        
-        public final boolean isEmpty() {
-                return selectedSaveSummaryFile == null;
-        }
-        
         public final void clear() {
                 selectedSaveSummaryFile = null;
+                selectedSaveOverlayDir = null;
                 saveSummaryField.setText("");
+                saveOverlaysField.setText("");
         }
         
         public final ParticleAnalysisDefaultOptions getAnalysisOptions() {

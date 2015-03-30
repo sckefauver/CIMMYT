@@ -8,7 +8,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import cimmyt.maize.options.Options;
+import cimmyt.maize.options.ProcessOption;
 import cimmyt.maize.options.ThresholdOptions;
 
 /**
@@ -29,7 +29,7 @@ public class ThresholdPanel extends JPanel {
         private ThresholdOptions thresholdOptions = new ThresholdOptions();
         
         public ThresholdPanel() {
-                thresholdOptions.setOptionKey(Options.THRESHOLD);
+                thresholdOptions.setOptionKey(ProcessOption.THRESHOLD);
                 
                 thresholdLabel = new JLabel("Auto Threshold Method:");
                 thresholdLabel.setHorizontalAlignment(JLabel.RIGHT);

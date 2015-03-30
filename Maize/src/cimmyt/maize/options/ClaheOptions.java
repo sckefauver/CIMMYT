@@ -8,7 +8,7 @@ package cimmyt.maize.options;
  */
 public class ClaheOptions implements ProcessOptions {
         
-        private Options optionKey = null;
+        private ProcessOption optionKey = null;
         
         private int blockSize = 0;
         private int histogramBins = 0;
@@ -52,12 +52,12 @@ public class ClaheOptions implements ProcessOptions {
         }
 
         @Override
-        public void setOptionKey(Options optionKey) {
+        public void setOptionKey(ProcessOption optionKey) {
                 this.optionKey = optionKey;
         }
 
         @Override
-        public Options getOptionKey() {
+        public ProcessOption getOptionKey() {
                 return optionKey;
         }
 }

@@ -8,12 +8,13 @@ package cimmyt.maize.options;
  */
 public class ParticleAnalysisOptions implements AnalysisOptions {
 
+        private AnalysisOption optionKey = null;
         private double minParticleSize = 0.0;
         private double maxParticleSize = 0.0;
         private double minParticleCirc = 0.0;
         private double maxParticleCirc = 0.0;
         private boolean isMaxParticleSizeInfinity = false;
-
+        
         public ParticleAnalysisOptions() {
 
         }
@@ -56,5 +57,15 @@ public class ParticleAnalysisOptions implements AnalysisOptions {
 
         public void setMaxParticleSizeInfinity(boolean isMaxParticleSizeInfinity) {
                 this.isMaxParticleSizeInfinity = isMaxParticleSizeInfinity;
+        }
+        
+        @Override
+        public void setOptionKey(AnalysisOption optionKey) {
+                this.optionKey = optionKey;
+        }
+
+        @Override
+        public AnalysisOption getOptionKey() {
+                return optionKey;
         }
 }

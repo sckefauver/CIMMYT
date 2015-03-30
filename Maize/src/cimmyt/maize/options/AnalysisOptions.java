@@ -8,7 +8,7 @@ package cimmyt.maize.options;
  */
 public interface AnalysisOptions {
 
-        /*
-         * Just for tagging purposes
-         */
+        public void setOptionKey(AnalysisOption optionKey);
+        
+        public AnalysisOption getOptionKey();
 }

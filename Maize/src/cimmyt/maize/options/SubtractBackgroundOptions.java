@@ -8,7 +8,7 @@ package cimmyt.maize.options;
  */
 public class SubtractBackgroundOptions implements ProcessOptions {
 
-        private Options optionKey = null;
+        private ProcessOption optionKey = null;
         
         private double rollingBallRadius = 0.0;
         private boolean lightBackground = false;
@@ -34,12 +34,12 @@ public class SubtractBackgroundOptions implements ProcessOptions {
         }
         
         @Override
-        public void setOptionKey(Options optionKey) {
+        public void setOptionKey(ProcessOption optionKey) {
                 this.optionKey = optionKey;
         }
 
         @Override
-        public Options getOptionKey() {
+        public ProcessOption getOptionKey() {
                 return optionKey;
         }
 }

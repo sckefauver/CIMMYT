@@ -9,7 +9,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
-import cimmyt.maize.options.Options;
+import cimmyt.maize.options.ProcessOption;
 import cimmyt.maize.options.SubtractBackgroundOptions;
 
 /**
@@ -28,7 +28,7 @@ public class SubtractBackgroundPanel extends JPanel {
         private SubtractBackgroundOptions subtractBackgroundOptions = new SubtractBackgroundOptions();
         
         public SubtractBackgroundPanel() {
-                subtractBackgroundOptions.setOptionKey(Options.SUBTRACT_BACKGROUND);
+                subtractBackgroundOptions.setOptionKey(ProcessOption.SUBTRACT_BACKGROUND);
                 
                 subBackgroundLabel = new JLabel("Subtract Background:");
                 subBackgroundLabel.setHorizontalAlignment(JLabel.RIGHT);

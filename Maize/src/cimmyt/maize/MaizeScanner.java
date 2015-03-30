@@ -1,5 +1,8 @@
 package cimmyt.maize;
 
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import ij.IJ;
 import ij.plugin.PlugIn;
 import javax.swing.UIManager;
@@ -13,6 +16,8 @@ import cimmyt.maize.ui.tools.UITool;
  */
 public class MaizeScanner implements PlugIn {
 
+        private MaizeFrame frame = null;
+        
         @Override
         public void run(String arg) {
                 if (IJ.versionLessThan("1.49m")) {
@@ -25,10 +30,15 @@ public class MaizeScanner implements PlugIn {
                         catch (Exception e) {
                                 // Will use the standard Look&Feel
                         }
-
-                        MaizeFrame frame = new MaizeFrame();
-                        UITool.center(frame);
-                        frame.setVisible(true);
+                        
+                        UITool.showSplashWindow(UITool.getImageIcon("/cimmyt/maize/ui/icons/cimmyt_splash.png"), 2000, new Dimension(660,651), null, new ActionListener() {
+                                @Override
+                                public void actionPerformed(ActionEvent e) {
+                                        frame = new MaizeFrame();
+                                        UITool.center(frame);
+                                        frame.setVisible(true);
+                                }
+                        });
                 }
         }
 }

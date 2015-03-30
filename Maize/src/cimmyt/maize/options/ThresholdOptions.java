@@ -8,7 +8,7 @@ package cimmyt.maize.options;
  */
 public class ThresholdOptions implements ProcessOptions {
 
-        private Options optionKey = null;
+        private ProcessOption optionKey = null;
         
         private String thresholdMethod = null;
         private boolean darkBackground = false;
@@ -34,12 +34,12 @@ public class ThresholdOptions implements ProcessOptions {
         }
         
         @Override
-        public void setOptionKey(Options optionKey) {
+        public void setOptionKey(ProcessOption optionKey) {
                 this.optionKey = optionKey;
         }
 
         @Override
-        public Options getOptionKey() {
+        public ProcessOption getOptionKey() {
                 return optionKey;
         }
 }

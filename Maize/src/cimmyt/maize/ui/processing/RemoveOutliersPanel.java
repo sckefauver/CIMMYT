@@ -9,7 +9,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
-import cimmyt.maize.options.Options;
+import cimmyt.maize.options.ProcessOption;
 import cimmyt.maize.options.RemoveOutlierOptions;
 
 /**
@@ -31,7 +31,7 @@ public class RemoveOutliersPanel extends JPanel {
         private RemoveOutlierOptions removeOutliersOptions = new RemoveOutlierOptions();
         
         public RemoveOutliersPanel() {
-                removeOutliersOptions.setOptionKey(Options.REMOVE_OUTLIERS);
+                removeOutliersOptions.setOptionKey(ProcessOption.REMOVE_OUTLIERS);
                 
                 removeOutliersLabel = new JLabel("Remove Outliers (pixels):");
                 removeOutliersLabel.setHorizontalAlignment(JLabel.RIGHT);

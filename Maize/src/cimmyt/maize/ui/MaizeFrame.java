@@ -2,7 +2,7 @@ package cimmyt.maize.ui;
 
 import ij.IJ;
 import java.awt.BorderLayout;
-import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,10 +22,13 @@ import layout.TableLayout;
 import cimmyt.maize.engine.ScannerEngine;
 import cimmyt.maize.options.ParticleAnalysisDefaultOptions;
 import cimmyt.maize.options.ParticleAnalysisOptions;
+import cimmyt.maize.options.RgbMeasureOptions;
 import cimmyt.maize.ui.analysis.ParticleAnalyzerDefaultsPanel;
 import cimmyt.maize.ui.analysis.ParticleAnalyzerPanel;
+import cimmyt.maize.ui.analysis.RgbMeasurePanel;
 import cimmyt.maize.ui.processing.ClahePanel;
 import cimmyt.maize.ui.processing.FileSelectPanel;
+import cimmyt.maize.ui.processing.ProcessedImagesPanel;
 import cimmyt.maize.ui.processing.RemoveOutliersPanel;
 import cimmyt.maize.ui.processing.SubtractBackgroundPanel;
 import cimmyt.maize.ui.processing.ThresholdPanel;
@@ -50,9 +53,11 @@ public class MaizeFrame extends JFrame {
         private SubtractBackgroundPanel subtractBackgroundPanel = null;
         private ThresholdPanel thresholdPanel = null;
         private RemoveOutliersPanel removeOutliersPanel = null;
+        private ProcessedImagesPanel processedImagesPanel = null;
         private ParticleAnalyzerDefaultsPanel particleAnalyzerDefaultsPanel = null;
         private ParticleAnalyzerPanel particleAnalyzerPanel = null;
         private JScrollPane particleAnalyzerScrollPane = null;
+        private RgbMeasurePanel rgbMeasurePanel = null;
         
         private JCheckBox enableClaheCheckBox = null;
         private JCheckBox enableSubtractBackgroundCheckBox = null;
@@ -60,11 +65,15 @@ public class MaizeFrame extends JFrame {
         private JCheckBox enableThresholdCheckBox = null;
         private JCheckBox enableRemoveOutlisersCheckBox = null;
         private JCheckBox enableParticleAnalyzerDefaultsCheckBox = null;
+        private JCheckBox enableRgbMeasureCheckBox = null;
+        private JCheckBox enableSaveProcessImagesCheckBox = null;
         
         private JPanel buttonPanel = null;
         private JButton analyzeButton = null;
+        private JButton closeButton = null;
         
         private ScannerEngine scannerEngine = null;
+        private boolean scannerRunning = false;
         
         public MaizeFrame() {
                 init();
@@ -76,10 +85,12 @@ public class MaizeFrame extends JFrame {
                 subtractBackgroundPanel = new SubtractBackgroundPanel();
                 thresholdPanel = new ThresholdPanel();
                 removeOutliersPanel = new RemoveOutliersPanel();
+                processedImagesPanel = new ProcessedImagesPanel();
                 
                 particleAnalyzerDefaultsPanel = new ParticleAnalyzerDefaultsPanel();
                 particleAnalyzerPanel = new ParticleAnalyzerPanel();
                 particleAnalyzerScrollPane = new JScrollPane(particleAnalyzerPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+                rgbMeasurePanel = new RgbMeasurePanel();
                 
                 // ---------------------------------------------------
                 
@@ -123,7 +134,7 @@ public class MaizeFrame extends JFrame {
                         }
                 });
                 
-                enableParticleAnalyzerDefaultsCheckBox = new JCheckBox("", false);
+                enableParticleAnalyzerDefaultsCheckBox = new JCheckBox("", true);
                 enableParticleAnalyzerDefaultsCheckBox.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
@@ -131,22 +142,47 @@ public class MaizeFrame extends JFrame {
                         }
                 });
                 
+                enableRgbMeasureCheckBox = new JCheckBox("", false);
+                enableRgbMeasureCheckBox.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                                rgbMeasurePanel.setEnabled(((JCheckBox)e.getSource()).isSelected());
+                        }
+                });
+                
+                enableSaveProcessImagesCheckBox = new JCheckBox("", false);
+                enableSaveProcessImagesCheckBox.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                                processedImagesPanel.setEnabled(((JCheckBox)e.getSource()).isSelected());
+                        }
+                });
+                
                 // ---------------------------------------------------
                 
                 analyzeButton = new JButton("Analyze");
-                analyzeButton.setPreferredSize(new Dimension(80, 25));
                 analyzeButton.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
                                 if(checkOptions()) {
+                                        scannerRunning = true;
                                         analyzeButton_actionPerformed();
                                 }
                         }
                 });
                 
-                buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
+                closeButton = new JButton("Close");
+                closeButton.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                                exit();
+                        }
+                });
+                
+                buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 5));
                 buttonPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
                 buttonPanel.add(analyzeButton);
+                buttonPanel.add(closeButton);
                 
                 // ---------------------------------------------------
                 
@@ -164,7 +200,7 @@ public class MaizeFrame extends JFrame {
                                  spacer,
                                  TableLayout.PREFERRED, //8
                                  spacer,
-                                 TableLayout.FILL}      //10
+                                 TableLayout.PREFERRED} //10
                 };
                 
                 processingPanel = new JPanel(new TableLayout(processingLayoutSize));
@@ -177,7 +213,9 @@ public class MaizeFrame extends JFrame {
                 processingPanel.add(enableThresholdCheckBox,          "0,  6, l, t");
                 processingPanel.add(thresholdPanel,                   "2,  6      ");
                 processingPanel.add(enableRemoveOutlisersCheckBox,    "0,  8, l, t");
-                processingPanel.add(removeOutliersPanel,              "2,  8     ");
+                processingPanel.add(removeOutliersPanel,              "2,  8      ");
+                processingPanel.add(enableSaveProcessImagesCheckBox,  "0,  10,l, t");
+                processingPanel.add(processedImagesPanel,             "2,  10      ");
                 
                 // ---------------------------------------------------
                 
@@ -186,18 +224,21 @@ public class MaizeFrame extends JFrame {
                                 {TableLayout.PREFERRED, spacer, TableLayout.PREFERRED},
                                 {TableLayout.PREFERRED, //0
                                  spacer,
-                                 TableLayout.FILL}      //2
+                                 TableLayout.PREFERRED, //2
+                                 spacer,
+                                 TableLayout.FILL}      //4
                 };
                 
                 analysisPanel = new JPanel(new TableLayout(analysisLayoutSize));
                 analysisPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
                 analysisPanel.add(enableParticleAnalyzerDefaultsCheckBox, "0, 0, l, t");
                 analysisPanel.add(particleAnalyzerDefaultsPanel,          "2, 0      ");
-                analysisPanel.add(enableParticleAnalyzerCheckBox,         "0, 2, l, t");
-                analysisPanel.add(particleAnalyzerScrollPane,             "2, 2      ");
+                analysisPanel.add(enableRgbMeasureCheckBox,               "0, 2, l, t");
+                analysisPanel.add(rgbMeasurePanel,                        "2, 2      ");
+                analysisPanel.add(enableParticleAnalyzerCheckBox,         "0, 4, l, t");
+                analysisPanel.add(particleAnalyzerScrollPane,             "2, 4      ");
                 
                 tabbedPane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);
-                tabbedPane.addTab("View", new JPanel());
                 tabbedPane.addTab("Image Processing", processingPanel);
                 tabbedPane.addTab("Image Analysis", analysisPanel);
                 
@@ -222,7 +263,9 @@ public class MaizeFrame extends JFrame {
                    !enableSubtractBackgroundCheckBox.isSelected() &&
                    !enableThresholdCheckBox.isSelected() &&
                    !enableRemoveOutlisersCheckBox.isSelected() &&
-                   !enableParticleAnalyzerCheckBox.isSelected()) {
+                   !enableParticleAnalyzerCheckBox.isSelected() &&
+                   !enableParticleAnalyzerDefaultsCheckBox.isSelected() &&
+                   !enableRgbMeasureCheckBox.isSelected()) {
                         JOptionPane.showMessageDialog(MaizeFrame.this, "At least one option must be enabled", "Options Check", JOptionPane.INFORMATION_MESSAGE);
                         return false;
                 }
@@ -259,6 +302,11 @@ public class MaizeFrame extends JFrame {
                         scannerEngine.addProcessOption(removeOutliersPanel.getOptions());
                 }
                 
+                if(enableSaveProcessImagesCheckBox.isSelected()) {
+                        scannerEngine.setSaveProcessedImages(true);
+                        scannerEngine.setSaveProcessedImagesDir(processedImagesPanel.getSelectedDir());
+                }
+                
                 if(enableParticleAnalyzerCheckBox.isSelected()) {
                         ParticleAnalysisOptions[] options = particleAnalyzerPanel.getAnalysisOptions();
                         for (int i = 0; i < options.length; i++) {
@@ -268,6 +316,12 @@ public class MaizeFrame extends JFrame {
                 
                 if(enableParticleAnalyzerDefaultsCheckBox.isSelected()) {
                         ParticleAnalysisDefaultOptions options = particleAnalyzerDefaultsPanel.getAnalysisOptions();
+                        
+                        if(enableRgbMeasureCheckBox.isSelected()) {
+                                RgbMeasureOptions options2 = rgbMeasurePanel.getAnalysisOptions();
+                                options.setMeasureRgb(options2.isMeasureRgb());
+                        }
+                        
                         scannerEngine.setDefaultAnalysisOptions(options);
                 }
                 
@@ -278,6 +332,12 @@ public class MaizeFrame extends JFrame {
                         public void run() {
                                 try {
                                         scannerEngine.processBatch();
+                                        EventQueue.invokeLater(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                        JOptionPane.showMessageDialog(MaizeFrame.this, "Done");
+                                                }
+                                        });
                                 }
                                 catch(IOException ioe) {
                                         ioe.printStackTrace();
@@ -286,6 +346,7 @@ public class MaizeFrame extends JFrame {
                                 
                                 System.gc();
                                 analyzeButton.setEnabled(true);
+                                scannerRunning = false;
                         }
                 });
                 
@@ -293,7 +354,15 @@ public class MaizeFrame extends JFrame {
         }
         
         private final void exit() {
-                int choice = JOptionPane.showConfirmDialog(this, "Do you wish to exit the plugin ?", "Exit Plugin ?", JOptionPane.YES_NO_CANCEL_OPTION);
+                String msg = null;
+                if(scannerRunning) {
+                        msg = "The scanner is still running and exiting now may leave results unfinished, still exit ?";
+                }
+                else {
+                        msg = "Do you wish to exit the plugin ?";
+                }
+                
+                int choice = JOptionPane.showConfirmDialog(this, msg, "Exit Plugin ?", JOptionPane.YES_NO_CANCEL_OPTION);
                 if(JOptionPane.YES_OPTION == choice) {
                         setVisible(false);
                         dispose();

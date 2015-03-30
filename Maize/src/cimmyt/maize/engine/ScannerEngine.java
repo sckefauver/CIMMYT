@@ -22,15 +22,18 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import cimmyt.maize.options.AnalysisOption;
 import cimmyt.maize.options.AnalysisOptions;
 import cimmyt.maize.options.ClaheOptions;
-import cimmyt.maize.options.Options;
 import cimmyt.maize.options.ParticleAnalysisDefaultOptions;
 import cimmyt.maize.options.ParticleAnalysisOptions;
+import cimmyt.maize.options.ProcessOption;
 import cimmyt.maize.options.ProcessOptions;
 import cimmyt.maize.options.RemoveOutlierOptions;
 import cimmyt.maize.options.SubtractBackgroundOptions;
 import cimmyt.maize.options.ThresholdOptions;
+import cimmyt.maize.plugins.RGB_Measure_Plus;
+import cimmyt.maize.plugins.RgbMeasure;
 import cimmyt.maize.ui.analysis.SummaryResults;
 
 /**
@@ -51,6 +54,9 @@ public class ScannerEngine {
         private BufferedWriter summaryWriter = null;
         private int summaryLineCounter = 0;
         private boolean printSummaryHeadings = true;
+        
+        private boolean isSaveProcessedImages = false;
+        private String saveProcessedImagesDir = null;
         
         public ScannerEngine() {
                 
@@ -98,6 +104,22 @@ public class ScannerEngine {
                 return defaultAnalysisOptions != null;
         }
         
+        public final void setSaveProcessedImages(boolean isSaveProcessedImages) {
+                this.isSaveProcessedImages = isSaveProcessedImages;
+        }
+
+        public final String getSaveProcessedImagesDir() {
+                return saveProcessedImagesDir;
+        }
+
+        public final void setSaveProcessedImagesDir(String saveProcessedImagesDir) throws NullPointerException {
+                if(saveProcessedImagesDir == null) {
+                        throw new NullPointerException("saveProcessedImagesDir cannot be null");
+                }
+                
+                this.saveProcessedImagesDir = saveProcessedImagesDir;
+        }
+
         private final void openStreams() throws IOException {
                 if (defaultAnalysisOptions.isSaveSummaries()) {
                         summaryWriter = new BufferedWriter(new FileWriter(defaultAnalysisOptions.getSaveSummaryFile()));
@@ -159,13 +181,15 @@ public class ScannerEngine {
                 try {
                         File imageFile = null;
                         ImagePlus image = null;
+                        ImagePlus imageDup = null;
                         for(int i=0; i < selectedFiles.length; i++) {
                                 imageFile = selectedFiles[i];
                                 image = openImage(imageFile);
                                 
                                 if(image != null) {
+                                        imageDup = image.duplicate();
                                         processImage(imageFile, image);
-                                        analyzeImage(imageFile, image);
+                                        analyzeImage(imageFile, image, imageDup);
                                         
                                         image.unlock();
                                         image.flush();
@@ -187,29 +211,38 @@ public class ScannerEngine {
         
         private final void processImage(File imageFile, ImagePlus image) {
                 for (ProcessOptions processOption : processOptionsList) {
-                        Options opt = processOption.getOptionKey();
+                        ProcessOption opt = processOption.getOptionKey();
                         switch(opt) {
                                 case ENHANCE_LOCAL_CONTRAST: {
                                         enhanceLocalContrast(image, processOption);
-//                                        IJ.saveAs(image, "jpg", "C:\\Users\\George\\fijitest\\clahe_"+imageFile.getName());
+                                        if(isSaveProcessedImages) {
+                                                IJ.saveAs(image, "jpg", saveProcessedImagesDir+File.separator+imageFile.getName()+"_clahe"); 
+                                        }
+                                        
                                         break;
                                 }
         
                                 case SUBTRACT_BACKGROUND: {
                                         subtractBackground(image, processOption);
-//                                        IJ.saveAs(image, "jpg", "C:\\Users\\George\\fijitest\\subbg_"+imageFile.getName());
+                                        if(isSaveProcessedImages) {
+                                                IJ.saveAs(image, "jpg", saveProcessedImagesDir+File.separator+imageFile.getName()+"_subtract_bg");
+                                        }
                                         break;
                                 }
         
                                 case THRESHOLD: {
                                         adjustThreshold(image, processOption);
-//                                        IJ.saveAs(image, "jpg", "C:\\Users\\George\\fijitest\\thresh_"+imageFile.getName());
+                                        if(isSaveProcessedImages) {
+                                                IJ.saveAs(image, "jpg", saveProcessedImagesDir+File.separator+imageFile.getName()+"_threshold");
+                                        }
                                         break;
                                 }
         
                                 case REMOVE_OUTLIERS: {
                                         removeOutliers(image, processOption);
-//                                        IJ.saveAs(image, "jpg", "C:\\Users\\George\\fijitest\\outliers_"+imageFile.getName());
+                                        if(isSaveProcessedImages) {
+                                                IJ.saveAs(image, "jpg", saveProcessedImagesDir+File.separator+imageFile.getName()+"_outliers");
+                                        }
                                         break;
                                 }
         
@@ -220,107 +253,182 @@ public class ScannerEngine {
                 }
         }
         
-        private final void analyzeImage(File imageFile, ImagePlus image) throws IOException {
-                int options = ParticleAnalyzer.EXCLUDE_EDGE_PARTICLES +
-                              ParticleAnalyzer.CLEAR_WORKSHEET +
-                              ParticleAnalyzer.DISPLAY_SUMMARY +
-                              ParticleAnalyzer.ELLIPSE;
-                
-                              // Use this if I want to get the outlines with labels
-                              // directly from the particle analyzer
-                              // ParticleAnalyzer.SHOW_OUTLINES;
-                              // analyzer.setHideOutputImage(true);
-                              // analyzer.getOutputImage();
-                
-                int measurements = Measurements.AREA +
-                                    Measurements.MEAN +
-                                    Measurements.STD_DEV +
-                                    Measurements.MODE +
-                                    Measurements.MEDIAN +
-                                    Measurements.MIN_MAX +
-                                    Measurements.CENTROID +
-                                    Measurements.CENTER_OF_MASS +
-                                    Measurements.PERIMETER +
-                                    Measurements.FERET +
-                                    Measurements.INTEGRATED_DENSITY +
-                                    Measurements.AREA_FRACTION +
-                                    Measurements.CIRCULARITY;
-                
-                if(defaultAnalysisOptions.isSaveSummaries()) {
-                        cleanUpSummaryWindow();
-                }
-                
+        private final void analyzeImage(File imageFile, ImagePlus image, ImagePlus imageDup) throws IOException {
                 for (int i=0; i < analysisOptionsList.size(); i++) {
                         AnalysisOptions analysisOption = analysisOptionsList.get(i);
-                        ParticleAnalysisOptions pOptions = (ParticleAnalysisOptions)analysisOption;
-                        double minSize = pOptions.getMinParticleSize();
-                        double maxSize = 0;
-                        
-                        if(pOptions.isMaxParticleSizeInfinity()) {
-                                maxSize = Double.POSITIVE_INFINITY;
-                        }
-                        else {
-                                maxSize = pOptions.getMaxParticleSize();
-                        }
-                        
-                        double minCirc = pOptions.getMinParticleCirc();
-                        double maxCirc = pOptions.getMaxParticleCirc();
-                        
-                        ResultsTable rt = new ResultsTable();
-                        ParticleAnalyzer analyzer = new ParticleAnalyzer(options, measurements, rt, minSize, maxSize, minCirc, maxCirc);
-                        ParticleAnalyzer.setRoiManager(roiManager);
-                        roiManager.reset();
-                        analyzer.analyze(image);
-                        
-                        if(hasDefaultAnalysisOptions()) {
-                                if(defaultAnalysisOptions.isSaveOverlays()) {
-                                        Roi[] rois = roiManager.getRoisAsArray();
-                                        Overlay over = new Overlay();
-                                        for (int j = 0; j < rois.length; j++) {
-                                                Roi roi = rois[j];
-                                                roi.setStrokeColor(Color.MAGENTA);
-                                                roi.setStrokeWidth(1);
-                                                over.add(roi);
-                                        }
-                                        
-                                        ImagePlus imageDup = image.duplicate();
-                                        imageDup.setOverlay(over);
-                                        imageDup.updateAndDraw();
-                                        
-                                        String overlayDir = defaultAnalysisOptions.getSaveOverlaysDir();
-                                        IJ.saveAs(imageDup, "jpg", overlayDir+File.separator+imageFile.getName()+"_overlay_"+i);
-                                        
-                                        imageDup.unlock();
-                                        imageDup.flush();
-                                        imageDup = null;
+                        AnalysisOption opt = analysisOption.getOptionKey();
+                        switch(opt) {
+                                case PARTICLE_ANALYSIS: {
+                                        particleAnalysis(imageFile, image, imageDup, analysisOption, i);
+                                        break;
                                 }
                                 
-                                if(defaultAnalysisOptions.isSaveSummaries()) {
-                                        SummaryResults results = new SummaryResults();
-                                        Window window = WindowManager.getWindow("Summary");
-                                        if (window != null) {
-                                                window.setVisible(false);
-                                                TextWindow txtWindow = (TextWindow) window;
-                                                TextPanel txtPanel = txtWindow.getTextPanel();
-                                                String strSummary = txtPanel.getLine(summaryLineCounter);
-                                                if (strSummary != null && !strSummary.isEmpty()) {
-                                                        results.setSummaryHeadings(txtPanel.getColumnHeadings());
-                                                        results.setSummaryLine(strSummary);
-                                                }
-                                        }
-                                        
-                                        summaryLineCounter++;
-                                        
-                                        if (printSummaryHeadings) {
-                                                printSummayHeadings(results);
-                                                printSummaryHeadings = false;
-                                        }
-                                        
-                                        printSummary(results);
-                                        results = null;
+                                default: {
+                                        break;
                                 }
                         }
                 }
+        }
+        
+        private final void particleAnalysis(File imageFile, ImagePlus image, ImagePlus imageDup, AnalysisOptions opt, int index) throws IOException {
+                int options = ParticleAnalyzer.EXCLUDE_EDGE_PARTICLES +
+                                ParticleAnalyzer.CLEAR_WORKSHEET +
+                                ParticleAnalyzer.DISPLAY_SUMMARY +
+                                ParticleAnalyzer.ELLIPSE;
+                  
+                                // Use this if I want to get the outlines with labels
+                                // directly from the particle analyzer
+                                // ParticleAnalyzer.SHOW_OUTLINES;
+                                // analyzer.setHideOutputImage(true);
+                                // analyzer.getOutputImage();
+                  
+                  int measurements = Measurements.AREA +
+                                      Measurements.MEAN +
+                                      Measurements.STD_DEV +
+                                      Measurements.MODE +
+                                      Measurements.MEDIAN +
+                                      Measurements.MIN_MAX +
+                                      Measurements.CENTROID +
+                                      Measurements.CENTER_OF_MASS +
+                                      Measurements.PERIMETER +
+                                      Measurements.FERET +
+                                      Measurements.INTEGRATED_DENSITY +
+                                      Measurements.AREA_FRACTION +
+                                      Measurements.CIRCULARITY;
+                  
+                  if(defaultAnalysisOptions.isSaveSummaries()) {
+                          cleanUpSummaryWindow();
+                  }
+                  
+                  ParticleAnalysisOptions pOptions = (ParticleAnalysisOptions)opt;
+                  double minSize = pOptions.getMinParticleSize();
+                  double maxSize = 0;
+                  
+                  if(pOptions.isMaxParticleSizeInfinity()) {
+                          maxSize = Double.POSITIVE_INFINITY;
+                  }
+                  else {
+                          maxSize = pOptions.getMaxParticleSize();
+                  }
+                  
+                  double minCirc = pOptions.getMinParticleCirc();
+                  double maxCirc = pOptions.getMaxParticleCirc();
+                  
+                  ResultsTable rt = new ResultsTable();
+                  ParticleAnalyzer analyzer = new ParticleAnalyzer(options, measurements, rt, minSize, maxSize, minCirc, maxCirc);
+                  ParticleAnalyzer.setRoiManager(roiManager);
+                  roiManager.reset();
+                  analyzer.analyze(image);
+                  
+                  if(hasDefaultAnalysisOptions()) {
+                          if(defaultAnalysisOptions.isSaveOverlays()) {
+                                  Overlay overlay = getOverlay(Color.MAGENTA, 1);
+                                  imageDup.setOverlay(overlay);
+                                  imageDup.updateImage();
+                                  
+                                  String overlayDir = defaultAnalysisOptions.getSaveOverlaysDir();
+                                  IJ.saveAs(imageDup, "jpg", overlayDir+File.separator+imageFile.getName()+"_overlay_"+index);
+                                  
+                                  //Remove the overlay so it does not 
+                                  //interfere with other analysis methods
+                                  //that rely on ROIs
+                                  
+                                  imageDup.setOverlay(null);
+                                  overlay = null;
+                          }
+                          
+                          if(defaultAnalysisOptions.isSaveSummaries()) {
+                                  SummaryResults results = new SummaryResults();
+                                  Window window = WindowManager.getWindow("Summary");
+                                  if (window != null) {
+                                          window.setVisible(false);
+                                          TextWindow txtWindow = (TextWindow) window;
+                                          TextPanel txtPanel = txtWindow.getTextPanel();
+                                          String strSummary = txtPanel.getLine(summaryLineCounter);
+                                          if (strSummary != null && !strSummary.isEmpty()) {
+                                                  results.setSummaryHeadings(txtPanel.getColumnHeadings());
+                                                  results.setSummaryLine(strSummary);
+                                          }
+                                  }
+                                  
+                                  summaryLineCounter++;
+                                  
+                                  if(defaultAnalysisOptions.isMeasureRgb()) {
+                                          Overlay overlay = getOverlay();
+                                          imageDup.setOverlay(overlay);
+                                          imageDup.updateImage();
+                                          String colorMeasurements = measureRGB(imageDup);
+                                          
+                                          if(colorMeasurements != null) {
+                                                  results.appendResults(colorMeasurements, "R-Mean\tG-Mean\tB-Mean\tR-Std.Dev\tG-Std.Dev\tB-Std.Dev");
+                                          }
+                                          
+                                          //Remove the overlay so it does not 
+                                          //interfere with other analysis methods
+                                          //that rely on ROIs
+                                          
+                                          imageDup.setOverlay(null);
+                                          colorMeasurements = null;
+                                          overlay = null;
+                                  }
+                                  
+                                  if (printSummaryHeadings) {
+                                          printSummayHeadings(results);
+                                          printSummaryHeadings = false;
+                                  }
+                                  
+                                  printSummary(results);
+                                  results = null;
+                          }
+                  }
+        }
+        
+        private final Overlay getOverlay() {
+                return getOverlay(Color.MAGENTA, 1);
+        }
+        
+        private final Overlay getOverlay(Color overlayColor, float overlayWidth) {
+                Roi[] rois = roiManager.getRoisAsArray();
+                Overlay over = new Overlay();
+                for (int j = 0; j < rois.length; j++) {
+                        Roi roi = rois[j];
+                        roi.setStrokeColor(overlayColor);
+                        roi.setStrokeWidth(overlayWidth);
+                        over.add(roi);
+                }
+                
+                return over;
+        }
+        
+        private final String measureRGB(ImagePlus imageDup) {
+                RGB_Measure_Plus rgbMeasurePlus = new RGB_Measure_Plus();
+                RgbMeasure rgbMeasure = null;
+                String colorResults = null;
+                try {
+                        rgbMeasure = rgbMeasurePlus.measureRGB(imageDup);
+                        StringBuilder sb = new StringBuilder();
+                        sb.append(rgbMeasure.getrMean())
+                        .append("\t")
+                        .append(rgbMeasure.getgMean())
+                        .append("\t")
+                        .append(rgbMeasure.getbMean())
+                        .append("\t")
+                        .append(rgbMeasure.getrStdDev())
+                        .append("\t")
+                        .append(rgbMeasure.getgStdDev())
+                        .append("\t")
+                        .append(rgbMeasure.getbStdDev());
+                        colorResults = sb.toString();
+                        sb = null;
+                        rgbMeasure = null;
+                }
+                catch(Exception ex) {
+                        ex.printStackTrace();
+                }
+                
+                rgbMeasurePlus = null;
+                
+                return colorResults;
         }
         
         private final void enhanceLocalContrast(ImagePlus image, ProcessOptions processOption) {

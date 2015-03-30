@@ -10,7 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import cimmyt.maize.options.ClaheOptions;
-import cimmyt.maize.options.Options;
+import cimmyt.maize.options.ProcessOption;
 
 /**
  * 
@@ -30,7 +30,7 @@ public class ClahePanel extends JPanel {
         private ClaheOptions claheOptions = new ClaheOptions();
         
         public ClahePanel() {
-                claheOptions.setOptionKey(Options.ENHANCE_LOCAL_CONTRAST);
+                claheOptions.setOptionKey(ProcessOption.ENHANCE_LOCAL_CONTRAST);
                 
                 claheLabel = new JLabel("Enhance Local Contrast: ");
                 claheLabel.setHorizontalAlignment(JLabel.RIGHT);

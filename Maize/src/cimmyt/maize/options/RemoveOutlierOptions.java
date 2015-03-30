@@ -23,7 +23,7 @@ public class RemoveOutlierOptions implements ProcessOptions {
                 }
         }
         
-        private Options optionKey = null;
+        private ProcessOption optionKey = null;
         
         private double radius = 0.0;
         private float threshold = 0;
@@ -58,12 +58,12 @@ public class RemoveOutlierOptions implements ProcessOptions {
         }
         
         @Override
-        public void setOptionKey(Options optionKey) {
+        public void setOptionKey(ProcessOption optionKey) {
                 this.optionKey = optionKey;
         }
 
         @Override
-        public Options getOptionKey() {
+        public ProcessOption getOptionKey() {
                 return optionKey;
         }
 }
