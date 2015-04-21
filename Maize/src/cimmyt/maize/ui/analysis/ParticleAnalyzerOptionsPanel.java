@@ -195,7 +195,7 @@ public class ParticleAnalyzerOptionsPanel extends JPanel implements ActionListen
                 String text = source.getText();
                 
                 if(!DECIMAL_PATTERN.matcher(text).matches()) {
-                        JOptionPane.showMessageDialog(this, "Circularity value is not a valid decimal");
+                        JOptionPane.showMessageDialog(this, "Circularity value must be a decimal to 2 decimal places");
                 }
         }
         

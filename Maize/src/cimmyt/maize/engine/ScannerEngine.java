@@ -2,9 +2,9 @@ package cimmyt.maize.engine;
 
 import ij.IJ;
 import ij.ImagePlus;
-import ij.WindowManager;
 import ij.gui.Overlay;
 import ij.gui.Roi;
+import ij.measure.Calibration;
 import ij.measure.Measurements;
 import ij.measure.ResultsTable;
 import ij.plugin.filter.BackgroundSubtracter;
@@ -12,14 +12,16 @@ import ij.plugin.filter.ParticleAnalyzer;
 import ij.plugin.filter.RankFilters;
 import ij.plugin.frame.RoiManager;
 import ij.process.ImageConverter;
-import ij.text.TextPanel;
-import ij.text.TextWindow;
+import ij.process.ImageProcessor;
+import ij.process.ImageStatistics;
 import java.awt.Color;
-import java.awt.Window;
+import java.awt.Rectangle;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.List;
 import cimmyt.maize.options.AnalysisOption;
@@ -34,7 +36,6 @@ import cimmyt.maize.options.SubtractBackgroundOptions;
 import cimmyt.maize.options.ThresholdOptions;
 import cimmyt.maize.plugins.RGB_Measure_Plus;
 import cimmyt.maize.plugins.RgbMeasure;
-import cimmyt.maize.ui.analysis.SummaryResults;
 
 /**
  * 
@@ -50,13 +51,10 @@ public class ScannerEngine {
         private File[] selectedFiles = null;
         private RoiManager roiManager = null;
         
-        private static final int CLEAR_SUMMARY_MAX = 800;
         private BufferedWriter summaryWriter = null;
-        private int summaryLineCounter = 0;
-        private boolean printSummaryHeadings = true;
-        
         private boolean isSaveProcessedImages = false;
         private String saveProcessedImagesDir = null;
+        private boolean headingsPrinted = false;
         
         public ScannerEngine() {
                 
@@ -123,7 +121,6 @@ public class ScannerEngine {
         private final void openStreams() throws IOException {
                 if (defaultAnalysisOptions.isSaveSummaries()) {
                         summaryWriter = new BufferedWriter(new FileWriter(defaultAnalysisOptions.getSaveSummaryFile()));
-                        summaryLineCounter = 0;
                 }
         }
         
@@ -135,42 +132,6 @@ public class ScannerEngine {
                         }
                         catch (Exception ex) {}
                         summaryWriter = null;
-                }
-        }
-        
-        private final void closeSummaryWindow() {
-                if(defaultAnalysisOptions.isSaveSummaries()) {
-                        Window window = WindowManager.getWindow("Summary");
-                        window.setVisible(false);
-                        TextWindow txtWin = (TextWindow) window;
-                        txtWin.getTextPanel().clear();
-                        txtWin.close();
-                        txtWin = null;
-                        window.dispose();
-                        window = null;
-                }
-        }
-        
-        /**
-         * Perform a cleanup of the summary window every clearSummaries time.
-         * This will cause a small visual anomaly of a window appearing and then
-         * disappearing very quickly. This is done because calling the method
-         * to delete all the lines while the window is still visible does not
-         * work. So the window has to physically close and disposed of in memory.
-         * A garbage collection is then hinted at to keep memory consumption low.
-         */
-        private final void cleanUpSummaryWindow() {
-                if (summaryLineCounter >= CLEAR_SUMMARY_MAX) {
-                        summaryLineCounter = 0;
-                        Window window = WindowManager.getWindow("Summary");
-                        window.setVisible(false);
-                        TextWindow txtWin = (TextWindow) window;
-                        txtWin.getTextPanel().clear();
-                        txtWin.close();
-                        txtWin = null;
-                        window.dispose();
-                        window = null;
-                        System.gc();
                 }
         }
         
@@ -203,7 +164,6 @@ public class ScannerEngine {
                         IJ.error("I/O Error", "Error while writing to summary file.");
                 }
                 finally {
-                        closeSummaryWindow();
                         destroyRoiManager();
                         closeStreams();
                 }
@@ -270,36 +230,76 @@ public class ScannerEngine {
                 }
         }
         
+        //TODO move these somewhere more useful
+        
+        private static final MathContext MC = new MathContext(4);
+        
+        private static final int ANALYZER_OPTIONS = ParticleAnalyzer.EXCLUDE_EDGE_PARTICLES +
+                                                    ParticleAnalyzer.CLEAR_WORKSHEET +
+                                                    ParticleAnalyzer.ELLIPSE;
+        
+        private static final int ANALYZER_MEASUREMENTS =
+                                 Measurements.AREA +
+                                 Measurements.MEAN +
+                                 Measurements.STD_DEV +
+                                 Measurements.MODE +
+                                 Measurements.MEDIAN +
+                                 Measurements.MIN_MAX +
+                                 Measurements.CENTROID +
+                                 Measurements.CENTER_OF_MASS +
+                                 Measurements.PERIMETER +
+                                 Measurements.FERET +
+                                 Measurements.INTEGRATED_DENSITY +
+                                 Measurements.AREA_FRACTION +
+                                 Measurements.CIRCULARITY;
+        
+        private static final int[] RESULTS_COLUMNS = {
+                                   ResultsTable.AREA,
+                                   ResultsTable.MEAN,
+                                   ResultsTable.MODE,
+                                   ResultsTable.MEDIAN,
+                                   ResultsTable.PERIMETER,
+                                   ResultsTable.FERET,
+                                   ResultsTable.FERET_X,
+                                   ResultsTable.FERET_Y,
+                                   ResultsTable.FERET_ANGLE,
+                                   ResultsTable.MIN_FERET,
+                                   ResultsTable.INTEGRATED_DENSITY,
+                                   ResultsTable.CIRCULARITY,
+                                   ResultsTable.SOLIDITY
+        };
+        
+        private static final String[] SUMMARY_HEADINGS = {
+                "Total area",
+                "%Area",
+                "Average Size",
+                "Mean",
+                "Mode",
+                "Median",
+                "Perim.",
+                "Feret",
+                "FeretX",
+                "FeretY",
+                "FeretAngle",
+                "MinFeret",
+                "IntDen",
+                "Circ.",
+                "Solidity",
+        };
+        
+        private static final String[] SUMMARY_RGB_HEADINGS = {
+                "R-Mean",
+                "G-Mean",
+                "B-Mean",
+                "R-StdDev",
+                "G-StdDev",
+                "B-StdDev",
+                "R-Area",
+                "G-Area",
+                "B-Area",
+        };
+        
         private final void particleAnalysis(File imageFile, ImagePlus image, ImagePlus imageDup, AnalysisOptions opt, int index) throws IOException {
-                int options = ParticleAnalyzer.EXCLUDE_EDGE_PARTICLES +
-                                ParticleAnalyzer.CLEAR_WORKSHEET +
-                                ParticleAnalyzer.DISPLAY_SUMMARY +
-                                ParticleAnalyzer.ELLIPSE;
-                  
-                                // Use this if I want to get the outlines with labels
-                                // directly from the particle analyzer
-                                // ParticleAnalyzer.SHOW_OUTLINES;
-                                // analyzer.setHideOutputImage(true);
-                                // analyzer.getOutputImage();
-                  
-                  int measurements = Measurements.AREA +
-                                      Measurements.MEAN +
-                                      Measurements.STD_DEV +
-                                      Measurements.MODE +
-                                      Measurements.MEDIAN +
-                                      Measurements.MIN_MAX +
-                                      Measurements.CENTROID +
-                                      Measurements.CENTER_OF_MASS +
-                                      Measurements.PERIMETER +
-                                      Measurements.FERET +
-                                      Measurements.INTEGRATED_DENSITY +
-                                      Measurements.AREA_FRACTION +
-                                      Measurements.CIRCULARITY;
-                  
-                  if(defaultAnalysisOptions.isSaveSummaries()) {
-                          cleanUpSummaryWindow();
-                  }
-                  
                   ParticleAnalysisOptions pOptions = (ParticleAnalysisOptions)opt;
                   double minSize = pOptions.getMinParticleSize();
                   double maxSize = 0;
@@ -315,7 +315,7 @@ public class ScannerEngine {
                   double maxCirc = pOptions.getMaxParticleCirc();
                   
                   ResultsTable rt = new ResultsTable();
-                  ParticleAnalyzer analyzer = new ParticleAnalyzer(options, measurements, rt, minSize, maxSize, minCirc, maxCirc);
+                  ParticleAnalyzer analyzer = new ParticleAnalyzer(ANALYZER_OPTIONS, ANALYZER_MEASUREMENTS, rt, minSize, maxSize, minCirc, maxCirc);
                   ParticleAnalyzer.setRoiManager(roiManager);
                   roiManager.reset();
                   analyzer.analyze(image);
@@ -338,29 +338,26 @@ public class ScannerEngine {
                           }
                           
                           if(defaultAnalysisOptions.isSaveSummaries()) {
-                                  SummaryResults results = new SummaryResults();
-                                  Window window = WindowManager.getWindow("Summary");
-                                  if (window != null) {
-                                          window.setVisible(false);
-                                          TextWindow txtWindow = (TextWindow) window;
-                                          TextPanel txtPanel = txtWindow.getTextPanel();
-                                          String strSummary = txtPanel.getLine(summaryLineCounter);
-                                          if (strSummary != null && !strSummary.isEmpty()) {
-                                                  results.setSummaryHeadings(txtPanel.getColumnHeadings());
-                                                  results.setSummaryLine(strSummary);
-                                          }
-                                  }
-                                  
-                                  summaryLineCounter++;
+                                  float[] summary = calculateSummary(rt, image);
                                   
                                   if(defaultAnalysisOptions.isMeasureRgb()) {
                                           Overlay overlay = getOverlay();
                                           imageDup.setOverlay(overlay);
                                           imageDup.updateImage();
-                                          String colorMeasurements = measureRGB(imageDup);
+                                          RgbMeasure rgbMeasure = measureRGB(imageDup);
                                           
-                                          if(colorMeasurements != null) {
-                                                  results.appendResults(colorMeasurements, "R-Mean\tG-Mean\tB-Mean\tR-Std.Dev\tG-Std.Dev\tB-Std.Dev");
+                                          if(rgbMeasure != null) {
+                                                  summary[RESULTS_COLUMNS.length+2] = new BigDecimal(rgbMeasure.getrMean()).round(MC).floatValue();
+                                                  summary[RESULTS_COLUMNS.length+3] = new BigDecimal(rgbMeasure.getgMean()).round(MC).floatValue();
+                                                  summary[RESULTS_COLUMNS.length+4] = new BigDecimal(rgbMeasure.getbMean()).round(MC).floatValue();
+                                                  
+                                                  summary[RESULTS_COLUMNS.length+5] = new BigDecimal(rgbMeasure.getrStdDev()).round(MC).floatValue();
+                                                  summary[RESULTS_COLUMNS.length+6] = new BigDecimal(rgbMeasure.getgStdDev()).round(MC).floatValue();
+                                                  summary[RESULTS_COLUMNS.length+7] = new BigDecimal(rgbMeasure.getbStdDev()).round(MC).floatValue();
+                                                  
+                                                  summary[RESULTS_COLUMNS.length+8] = new BigDecimal(rgbMeasure.getrArea()).round(MC).floatValue();
+                                                  summary[RESULTS_COLUMNS.length+9] = new BigDecimal(rgbMeasure.getgArea()).round(MC).floatValue();
+                                                  summary[RESULTS_COLUMNS.length+10] = new BigDecimal(rgbMeasure.getbArea()).round(MC).floatValue();
                                           }
                                           
                                           //Remove the overlay so it does not 
@@ -368,19 +365,69 @@ public class ScannerEngine {
                                           //that rely on ROIs
                                           
                                           imageDup.setOverlay(null);
-                                          colorMeasurements = null;
+                                          rgbMeasure = null;
                                           overlay = null;
                                   }
                                   
-                                  if (printSummaryHeadings) {
-                                          printSummayHeadings(results);
-                                          printSummaryHeadings = false;
-                                  }
-                                  
-                                  printSummary(results);
-                                  results = null;
+                                  printSummary(imageFile.getName(), summary);
                           }
                   }
+        }
+        
+        private final float[] calculateSummary(ResultsTable rt, ImagePlus image) {
+                float[] summaries = null;
+                if(defaultAnalysisOptions.isMeasureRgb()) {
+                        summaries = new float[RESULTS_COLUMNS.length+11]; //9 for RGB and 2 for area & %area
+                }
+                else {
+                        summaries = new float[RESULTS_COLUMNS.length+2];
+                }
+                
+                float areaSum = calculateSum(rt.getColumn(RESULTS_COLUMNS[ResultsTable.AREA]));
+                
+                Calibration calibration = image.getCalibration();
+                ImageProcessor ip = image.getProcessor();
+                Rectangle r = ip.getRoi();
+                ImageProcessor mask = ip.getMask();
+                double totalArea = 0;
+                if(mask != null) {
+                        totalArea = ImageStatistics.getStatistics(ip, Measurements.AREA, calibration).area;
+                }
+                else {
+                        totalArea = r.width*calibration.pixelWidth*r.height*calibration.pixelHeight;
+                }
+                
+                float pctArea = areaSum*100.0f/(float)totalArea;
+                
+                summaries[0] = areaSum;
+                summaries[1] = new BigDecimal(pctArea).round(MC).floatValue();
+                
+                for(int i=0; i < RESULTS_COLUMNS.length; i++) {
+                        float[] columnData = rt.getColumn(RESULTS_COLUMNS[i]);
+                        float sumAvg = calculateSumAverage(columnData);
+                        summaries[i+2] = new BigDecimal(sumAvg).round(MC).floatValue();
+                }
+                
+                return summaries;
+        }
+        
+        private final float calculateSumAverage(float[] data) {
+                float sumAvg = 0;
+                for(int i=0; i < data.length; i++) {
+                        sumAvg = sumAvg + data[i];
+                }
+                
+                sumAvg = sumAvg /  data.length;
+                return sumAvg;
+        }
+        
+        private final float calculateSum(float[] data) {
+                float sum = 0;
+                for(int i=0; i < data.length; i++) {
+                        sum = sum + data[i];
+                }
+                
+                return sum;
         }
         
         private final Overlay getOverlay() {
@@ -400,27 +447,12 @@ public class ScannerEngine {
                 return over;
         }
         
-        private final String measureRGB(ImagePlus imageDup) {
+        private final RgbMeasure measureRGB(ImagePlus imageDup) {
                 RGB_Measure_Plus rgbMeasurePlus = new RGB_Measure_Plus();
                 RgbMeasure rgbMeasure = null;
-                String colorResults = null;
+                
                 try {
                         rgbMeasure = rgbMeasurePlus.measureRGB(imageDup);
-                        StringBuilder sb = new StringBuilder();
-                        sb.append(rgbMeasure.getrMean())
-                        .append("\t")
-                        .append(rgbMeasure.getgMean())
-                        .append("\t")
-                        .append(rgbMeasure.getbMean())
-                        .append("\t")
-                        .append(rgbMeasure.getrStdDev())
-                        .append("\t")
-                        .append(rgbMeasure.getgStdDev())
-                        .append("\t")
-                        .append(rgbMeasure.getbStdDev());
-                        colorResults = sb.toString();
-                        sb = null;
-                        rgbMeasure = null;
                 }
                 catch(Exception ex) {
                         ex.printStackTrace();
@@ -428,7 +460,7 @@ public class ScannerEngine {
                 
                 rgbMeasurePlus = null;
                 
-                return colorResults;
+                return rgbMeasure;
         }
         
         private final void enhanceLocalContrast(ImagePlus image, ProcessOptions processOption) {
@@ -529,34 +561,43 @@ public class ScannerEngine {
                 return image;
         }
         
-        private final void printSummary(SummaryResults results) throws IOException {
-                String[] summaryLine = results.getSummaryLine();
-                StringBuilder sb = new StringBuilder();
-                for (int j = 0; j < summaryLine.length; j++) {
-                        sb.append(summaryLine[j]);
+        private final void printSummary(String imageName, float[] summary) throws IOException {
+                StringBuilder sb = null;
+                
+                if(!headingsPrinted) {
+                        sb = new StringBuilder();
+                        sb.append("Image Name\t");
+                        
+                        for(int i=0; i < SUMMARY_HEADINGS.length; i++) {
+                                sb.append(SUMMARY_HEADINGS[i]);
+                                sb.append('\t');
+                        }
+                        
+                        if(defaultAnalysisOptions.isMeasureRgb()) {
+                                for(int i=0; i < SUMMARY_RGB_HEADINGS.length; i++) {
+                                        sb.append(SUMMARY_RGB_HEADINGS[i]);
+                                        sb.append('\t');
+                                }
+                        }
+                        
+                        sb.delete(sb.length() - 1, sb.length());
+                        summaryWriter.write(sb.toString());
+                        summaryWriter.write(System.getProperty("line.separator"));
+                        
+                        headingsPrinted = true;
+                }
+                
+                sb = new StringBuilder();
+                sb.append(imageName).append('\t');
+                for(int i=0; i < summary.length; i++) {
+                        sb.append(summary[i]);
                         sb.append('\t');
                 }
-
+                
                 sb.delete(sb.length() - 1, sb.length());
-
                 summaryWriter.write(sb.toString());
                 summaryWriter.write(System.getProperty("line.separator"));
                 summaryWriter.flush();
-                sb = null;
-        }
-        
-        private final void printSummayHeadings(SummaryResults result) throws IOException {
-                String[] summaryHeadings = result.getSummaryHeadings();
-                StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < summaryHeadings.length; i++) {
-                        sb.append(summaryHeadings[i]);
-                        sb.append('\t');
-                }
-
-                sb.delete(sb.length() - 1, sb.length());
-
-                summaryWriter.write(sb.toString());
-                summaryWriter.write(System.getProperty("line.separator"));
                 sb = null;
         }
 }

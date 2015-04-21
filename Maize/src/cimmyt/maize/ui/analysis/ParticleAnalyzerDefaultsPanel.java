@@ -56,6 +56,7 @@ public class ParticleAnalyzerDefaultsPanel extends JPanel {
                 saveSummaryField.setEnabled(false);
                 
                 saveSummaryButton = new JButton("...");
+                saveSummaryButton.setEnabled(false);
                 saveSummaryButton.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
