@@ -19,39 +19,46 @@ public class MacroVars {
         private String batchOutputPrev = null;
         private String saveHsbImagesPrev = null;
         private String saveHsbDirPrev = null;
+        private String saveResultsFilePrev = null;
         
 //        private int batchInputIndexStart = -1;
 //        private int batchOutputIndexStart = -1;
 //        private int saveHsbImagesIndexStart = -1;
 //        private int saveHsbDirIndexStart = -1;
+//        private int saveResultsFileIndexStart = -1;
         
 //        private int batchInputLength = -1;
 //        private int batchOutputLength = -1;
 //        private int saveHsbImagesLength = -1;
 //        private int saveHsbDirLength = -1;
+//        private int saveResultsFileLength = -1;
         
 //        private Object batchInputHpTag = null;
 //        private Object batchOutputHpTag = null;
 //        private Object saveHsbImagesHpTag = null;
 //        private Object saveHsbDirHpTag = null;
+//        private Object saveResultsFileHpTag = null;
         
         public MacroVars() {
                 
         }
         
-        public final void setBatchInputVar(String batchInputPath, HighlightPainter highlightColor) {
+        public final void setBatchInputVar(String variableName, HighlightPainter highlightColor) {
                 String macroTxt = syntaxTextArea.getText();
                 
                 if(macroTxt.indexOf("$P{batch_input}") != -1) {
                         batchInputPrev = "$P{batch_input}";
                 }
                 
-                String newTxt = macroTxt.replace(batchInputPrev, batchInputPath);
+                variableName = variableName.replaceAll("\\\\", "\\\\\\\\");
+                variableName = variableName + "\\\\";
+                
+                String newTxt = macroTxt.replace(batchInputPrev, variableName);
                 syntaxTextArea.setText(newTxt);
                 
 //                batchInputIndexStart = newTxt.indexOf(batchInputPath);
 //                batchInputLength = batchInputPath.length();
-                batchInputPrev = new String(batchInputPath);
+                batchInputPrev = new String(variableName);
                 syntaxTextArea.setCaretPosition(0);
                 
 //                try {
@@ -77,6 +84,9 @@ public class MacroVars {
                 if(macroTxt.indexOf("$P{batch_output}") != -1) {
                         batchOutputPrev = "$P{batch_output}";
                 }
+                
+                variableName = variableName.replaceAll("\\\\", "\\\\\\\\");
+                variableName = variableName + "\\\\";
                 
                 String newTxt = macroTxt.replace(batchOutputPrev, variableName);
                 syntaxTextArea.setText(newTxt);
@@ -142,6 +152,9 @@ public class MacroVars {
                         saveHsbDirPrev = "$P{save_hsb_dir}";
                 }
                 
+                variableName = variableName.replaceAll("\\\\", "\\\\\\\\");
+                variableName = variableName + "\\\\";
+                
                 String newTxt = macroTxt.replace(saveHsbDirPrev, variableName);
                 syntaxTextArea.setText(newTxt);
                 
@@ -158,6 +171,40 @@ public class MacroVars {
 //                        }
 //                        
 //                        saveHsbDirHpTag = h.addHighlight(saveHsbDirIndexStart, saveHsbDirIndexStart + saveHsbDirLength, highlightColor);
+//                }
+//                catch (BadLocationException e) {
+//                        e.printStackTrace();
+//                }
+//                finally {
+//                        syntaxTextArea.setCaretPosition(0);
+//                }
+        }
+        
+        public final void setSaveResultsFile(String variableName, HighlightPainter highlightColor) {
+                String macroTxt = syntaxTextArea.getText();
+                
+                if(macroTxt.indexOf("$P{save_results_file}") != -1) {
+                        saveResultsFilePrev = "$P{save_results_file}";
+                }
+                
+                variableName = variableName.replaceAll("\\\\", "\\\\\\\\");
+                
+                String newTxt = macroTxt.replace(saveResultsFilePrev, variableName);
+                syntaxTextArea.setText(newTxt);
+                
+//                saveResultsFileIndexStart = newTxt.indexOf(variableName);
+//                saveResultsFileDirLength = variableName.length();
+                saveResultsFilePrev = new String(variableName);
+                syntaxTextArea.setCaretPosition(0);
+                
+//                try {
+//                        Highlighter h = syntaxTextArea.getHighlighter();
+//
+//                        if(saveResultsFileHpTag != null) {
+//                                h.removeHighlight(saveResultsFileHpTag);
+//                        }
+//
+//                        saveResultsFileHpTag = h.addHighlight(saveResultsFileIndexStart, saveResultsFileIndexStart + saveResultsFileLength, highlightColor);
 //                }
 //                catch (BadLocationException e) {
 //                        e.printStackTrace();
@@ -189,5 +236,9 @@ public class MacroVars {
 
         public final void setMacroName(String macroName) {
                 this.macroName = macroName;
+        }
+        
+        public final String getMacroCode() {
+                return syntaxTextArea.getText();
         }
 }

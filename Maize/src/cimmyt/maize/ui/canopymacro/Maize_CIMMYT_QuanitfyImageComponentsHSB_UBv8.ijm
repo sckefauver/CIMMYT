@@ -19,7 +19,7 @@ for (i = 0; i < list.length; i++) {
 
 selectWindow("Results")
 run("Input/Output...", "jpeg=85 gif=-1 file=.xls use_file copy_column copy_row save_column save_row");
-saveAs("Results", "C:\\MAIZE-CIMMYT\\batchoutputs\\HSB-ImageComponents-Results_UBv8.xls");
+saveAs("Results", "$P{save_results_file}");
 
 function action(input, output, filename) {
         //open and get id and base name
@@ -128,7 +128,7 @@ function action(input, output, filename) {
         selectWindow("soil");
         
         if(saveHsb) {
-                saveAs("Tiff", saveHsb + base + "_soil-hsb");
+                saveAs("Tiff", hsbDir + base + "_soil-hsb");
         }
         
         run("Invert");
@@ -138,7 +138,7 @@ function action(input, output, filename) {
         selectWindow("greenveg");
         
         if(saveHsb) {
-                saveAs("Tiff", saveHsb + base + "_greenveg-hsb");
+                saveAs("Tiff", hsbDir + base + "_greenveg-hsb");
         }
         
         run("Invert");
@@ -148,7 +148,7 @@ function action(input, output, filename) {
         selectWindow("yellowveg");
         
         if(saveHsb) {
-                saveAs("Tiff", saveHsb + base + "_yellowveg-hsb");
+                saveAs("Tiff", hsbDir + base + "_yellowveg-hsb");
         }
         
         run("Invert");
@@ -158,7 +158,7 @@ function action(input, output, filename) {
         selectWindow("bleachedveg");
         
         if(saveHsb) {
-                saveAs("Tiff", saveHsb + base + "_bleachedveg-hsb");
+                saveAs("Tiff", hsbDir + base + "_bleachedveg-hsb");
         }
         
         run("Invert");

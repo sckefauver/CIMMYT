@@ -5,6 +5,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,6 +25,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.plaf.basic.BasicButtonUI;
@@ -67,11 +69,13 @@ public class CanopyLevelMacroPanel extends JPanel {
         
         private JPanel buttonPanel = null;
         private JButton runButton = null;
+        private JProgressBar progressBar = null;
         
         private String recentDir = null;
         private File batchInputDir = null;
         private File batchOutputDir = null;
         private File saveHsbDir = null;
+        private File saveResultsFile = null;
         
         private HashMap<String, MacroVars> macroMap = null;
         
@@ -79,7 +83,7 @@ public class CanopyLevelMacroPanel extends JPanel {
         private static final HighlightPainter HP_MAGENTA = new DefaultHighlighter.DefaultHighlightPainter(Color.MAGENTA);
         private static final HighlightPainter HP_PINK = new DefaultHighlighter.DefaultHighlightPainter(Color.PINK);
         private static final HighlightPainter HP_ORANGE = new DefaultHighlighter.DefaultHighlightPainter(Color.ORANGE);
-        
+        private static final HighlightPainter HP_GREEN = new DefaultHighlighter.DefaultHighlightPainter(Color.GREEN);
         
         public CanopyLevelMacroPanel() {
                 macroMap = new HashMap<String, MacroVars>(7);
@@ -206,9 +210,15 @@ public class CanopyLevelMacroPanel extends JPanel {
                         }
                 });
                 
-                buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 5));
+                progressBar = new JProgressBar(JProgressBar.HORIZONTAL);
+                progressBar.setStringPainted(true);
+                progressBar.setString("Ready");
+                progressBar.setIndeterminate(false);
+                
+                buttonPanel = new JPanel(new BorderLayout(5, 5));
                 buttonPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-                buttonPanel.add(runButton);
+                buttonPanel.add(runButton, BorderLayout.EAST);
+                buttonPanel.add(progressBar, BorderLayout.CENTER);
                 
                 // ---------------------------------------------------
                 
@@ -220,12 +230,35 @@ public class CanopyLevelMacroPanel extends JPanel {
         }
         
         private final void runButton_actionPerformed() {
-                runButton.setEnabled(false);
-                
-                //TODO
-                
-                runButton.setEnabled(true);
-                MaizeFrame.setMacroRunning(false);
+                Thread macroThread = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                                EventQueue.invokeLater(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                                runButton.setEnabled(false);
+                                                progressBar.setIndeterminate(true);
+                                                progressBar.setString("Running Macro ...");
+                                        }
+                                });
+                                
+                                int index = macroTab.getSelectedIndex();
+                                MacroVars macroVar = macroMap.get("" + index);
+                                String macroCode = macroVar.getMacroCode();
+                                IJ.runMacro(macroCode);
+                                
+                                EventQueue.invokeLater(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                                progressBar.setIndeterminate(false);
+                                                progressBar.setString("Ready");
+                                                runButton.setEnabled(true);
+                                                MaizeFrame.setMacroRunning(false);
+                                        }
+                                });
+                        }
+                });
+                macroThread.start();
         }
         
         private final void batchInputButton_actionPerformed() {
@@ -282,7 +315,15 @@ public class CanopyLevelMacroPanel extends JPanel {
         }
         
         private final void resultsFileButton_actionPerformed() {
-                //TODO
+                saveResultsFile = FileOpen.getFile("Name Results File", (recentDir == null ? System.getProperty("user.dir") : recentDir), JFileChooser.FILES_AND_DIRECTORIES , "Results File (*.xls)", "xls");
+                if(saveResultsFile != null) {
+                        recentDir = saveResultsFile.getParentFile().getAbsolutePath();
+                        resultsFileField.setText(saveResultsFile.getAbsolutePath());
+                        
+                        int index = macroTab.getSelectedIndex();
+                        MacroVars macroVar = macroMap.get(""+index);
+                        macroVar.setSaveResultsFile(saveResultsFile.getAbsolutePath(), HP_GREEN);
+                }
         }
         
         private final void addMacroPanelTab(String tabName, String macroTemplateName) {
