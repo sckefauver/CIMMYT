@@ -9,6 +9,7 @@ import javax.swing.text.PlainDocument;
 /**
  * 
  * @author George - george.dma@gmail.com
+ * <br>
  * Created on: Mar 12, 2015
  *
  */
@@ -116,6 +117,7 @@ public class JCustomTextField extends JTextField {
 	/**
 	 * 
 	 * @author George - george.dma@gmail.com
+	 * <br>
 	 * Created on: Mar 12, 2015
 	 *
 	 */

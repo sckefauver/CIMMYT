@@ -6,6 +6,7 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 /**
  * 
  * @author George - george.dma@gmail.com
+ * <br>
  * Created on: Jun 22, 2015
  *
  */
@@ -16,25 +17,21 @@ public class MacroVars {
         private RSyntaxTextArea syntaxTextArea = null;
         
         private String batchInputPrev = null;
-        private String batchOutputPrev = null;
         private String saveHsbImagesPrev = null;
         private String saveHsbDirPrev = null;
         private String saveResultsFilePrev = null;
         
 //        private int batchInputIndexStart = -1;
-//        private int batchOutputIndexStart = -1;
 //        private int saveHsbImagesIndexStart = -1;
 //        private int saveHsbDirIndexStart = -1;
 //        private int saveResultsFileIndexStart = -1;
         
 //        private int batchInputLength = -1;
-//        private int batchOutputLength = -1;
 //        private int saveHsbImagesLength = -1;
 //        private int saveHsbDirLength = -1;
 //        private int saveResultsFileLength = -1;
         
 //        private Object batchInputHpTag = null;
-//        private Object batchOutputHpTag = null;
 //        private Object saveHsbImagesHpTag = null;
 //        private Object saveHsbDirHpTag = null;
 //        private Object saveResultsFileHpTag = null;
@@ -69,41 +66,6 @@ public class MacroVars {
 //                        }
 //                        
 //                        batchInputHpTag = h.addHighlight(batchInputIndexStart, batchInputIndexStart + batchInputLength, highlightColor);
-//                }
-//                catch (BadLocationException e) {
-//                        e.printStackTrace();
-//                }
-//                finally {
-//                        syntaxTextArea.setCaretPosition(0);
-//                }
-        }
-        
-        public final void setBatchOutputVar(String variableName, HighlightPainter highlightColor) {
-                String macroTxt = syntaxTextArea.getText();
-                
-                if(macroTxt.indexOf("$P{batch_output}") != -1) {
-                        batchOutputPrev = "$P{batch_output}";
-                }
-                
-                variableName = variableName.replaceAll("\\\\", "\\\\\\\\");
-                variableName = variableName + "\\\\";
-                
-                String newTxt = macroTxt.replace(batchOutputPrev, variableName);
-                syntaxTextArea.setText(newTxt);
-                
-//                batchOutputIndexStart = newTxt.indexOf(variableName);
-//                batchOutputLength = variableName.length();
-                batchOutputPrev = new String(variableName);
-                syntaxTextArea.setCaretPosition(0);
-                
-//                try {
-//                        Highlighter h = syntaxTextArea.getHighlighter();
-//                        
-//                        if(batchOutputHpTag != null) {
-//                                h.removeHighlight(batchOutputHpTag);
-//                        }
-//                        
-//                        batchOutputHpTag = h.addHighlight(batchOutputIndexStart, batchOutputIndexStart + batchOutputLength, highlightColor);
 //                }
 //                catch (BadLocationException e) {
 //                        e.printStackTrace();

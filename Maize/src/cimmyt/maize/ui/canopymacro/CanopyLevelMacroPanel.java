@@ -41,6 +41,7 @@ import cimmyt.maize.ui.tools.FileOpen;
 /**
  * 
  * @author George - george.dma@gmail.com
+ * <br>
  * Created on: May 26, 2015
  *
  */
@@ -51,10 +52,6 @@ public class CanopyLevelMacroPanel extends JPanel {
         private JLabel batchInputLabel = null;
         private JTextField batchInputField = null;
         private JButton batchInputButton = null;
-        
-        private JLabel batchOutputLabel = null;
-        private JTextField batchOutputField = null;
-        private JButton batchOutputButton = null;
         
         private JCheckBox saveHsbImagesCheckBox = null;
         private JTextField saveHsbImagesField = null;
@@ -73,14 +70,12 @@ public class CanopyLevelMacroPanel extends JPanel {
         
         private String recentDir = null;
         private File batchInputDir = null;
-        private File batchOutputDir = null;
         private File saveHsbDir = null;
         private File saveResultsFile = null;
         
         private HashMap<String, MacroVars> macroMap = null;
         
         private static final HighlightPainter HP_CYAN = new DefaultHighlighter.DefaultHighlightPainter(Color.CYAN);
-        private static final HighlightPainter HP_MAGENTA = new DefaultHighlighter.DefaultHighlightPainter(Color.MAGENTA);
         private static final HighlightPainter HP_PINK = new DefaultHighlighter.DefaultHighlightPainter(Color.PINK);
         private static final HighlightPainter HP_ORANGE = new DefaultHighlighter.DefaultHighlightPainter(Color.ORANGE);
         private static final HighlightPainter HP_GREEN = new DefaultHighlighter.DefaultHighlightPainter(Color.GREEN);
@@ -100,23 +95,6 @@ public class CanopyLevelMacroPanel extends JPanel {
                         @Override
                         public void actionPerformed(ActionEvent e) {
                                 batchInputButton_actionPerformed();
-                        }
-                });
-                
-                //----------------------------------------------------------------
-                
-                batchOutputLabel = new JLabel("Batch Outputs:");
-                batchOutputLabel.setHorizontalAlignment(JLabel.RIGHT);
-                
-                batchOutputField = new JTextField(20);
-                batchOutputField.setEditable(false);
-                batchOutputField.setBackground(Color.WHITE);
-                
-                batchOutputButton = new JButton("...");
-                batchOutputButton.addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                                batchOutputButton_actionPerformed();
                         }
                 });
                 
@@ -177,9 +155,8 @@ public class CanopyLevelMacroPanel extends JPanel {
                                  spacer,
                                  TableLayout.PREFERRED, //2
                                  spacer,
-                                 TableLayout.PREFERRED, //4
-                                 spacer,
-                                 TableLayout.PREFERRED} //6
+                                 TableLayout.PREFERRED //4
+                                }
                 };
                 
                 optionsPanel = new JPanel();
@@ -189,15 +166,12 @@ public class CanopyLevelMacroPanel extends JPanel {
                 optionsPanel.add(batchInputLabel,      "0, 0");
                 optionsPanel.add(batchInputField,      "2, 0");
                 optionsPanel.add(batchInputButton,     "4, 0");
-                optionsPanel.add(batchOutputLabel,     "0, 2");
-                optionsPanel.add(batchOutputField,     "2, 2");
-                optionsPanel.add(batchOutputButton,    "4, 2");
-                optionsPanel.add(saveHsbImagesCheckBox,"0, 4");
-                optionsPanel.add(saveHsbImagesField,   "2, 4");
-                optionsPanel.add(saveHsbImagesButton,  "4, 4");
-                optionsPanel.add(resultsFileLabel,     "0, 6");
-                optionsPanel.add(resultsFileField,     "2, 6");
-                optionsPanel.add(resultsFileButton,    "4, 6");
+                optionsPanel.add(saveHsbImagesCheckBox,"0, 2");
+                optionsPanel.add(saveHsbImagesField,   "2, 2");
+                optionsPanel.add(saveHsbImagesButton,  "4, 2");
+                optionsPanel.add(resultsFileLabel,     "0, 4");
+                optionsPanel.add(resultsFileField,     "2, 4");
+                optionsPanel.add(resultsFileButton,    "4, 4");
                 
                 //----------------------------------------------------------------
                 
@@ -270,18 +244,6 @@ public class CanopyLevelMacroPanel extends JPanel {
                         int index = macroTab.getSelectedIndex();
                         MacroVars macroVar = macroMap.get("" + index);
                         macroVar.setBatchInputVar(batchInputDir.getAbsolutePath(), HP_CYAN);
-                }
-        }
-        
-        private final void batchOutputButton_actionPerformed() {
-                batchOutputDir = FileOpen.getFile("Select batch output folder", (recentDir == null ? System.getProperty("user.dir") : recentDir), JFileChooser.DIRECTORIES_ONLY , "Batch Image Folder", (String[])null);
-                if(batchOutputDir != null) {
-                        recentDir = batchOutputDir.getAbsolutePath();
-                        batchOutputField.setText(batchOutputDir.getAbsolutePath());
-                        
-                        int index = macroTab.getSelectedIndex();
-                        MacroVars macroVar = macroMap.get(""+index);
-                        macroVar.setBatchOutputVar(batchOutputDir.getAbsolutePath(), HP_MAGENTA);
                 }
         }
         
