@@ -10,6 +10,7 @@ Maize Research FIJI Plugin v0.9 [Download Jar Here] (https://github.com/george-h
 ## Installation
 
 1. Download the CIMMYT Maize Scanner Jar file [Here] (https://github.com/george-haddad/CIMMYT/blob/master/Maize/dist/CIMMYT_Maize_Scanner_v0.9.jar))
+   * Click on "View Raw" to download the file
 2. Download the dependency Jar file [Here] (https://github.com/george-haddad/CIMMYT/blob/master/Maize/libs/tablelayout.jar)
 3. Place the *CIMMYT_Maize_Scanner_v0.9.jar* file in Fiji's plugins folder `Fiji.app\plugins`
 4. Place the dependency *tablelayout.jar* jar file in Fiji's plugins folder `Fiji.app\plugins`
