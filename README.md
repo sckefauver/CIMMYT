@@ -48,6 +48,7 @@ Canopy macros tab runs a batch macro processing on a user defined batch of image
 
 # License
 Copyright 2015 George El-Haddad
+
 Licensed under the General Public License version 3.0
 * [http://www.gnu.org/licenses/gpl-3.0.en.html] (http://www.gnu.org/licenses/gpl-3.0.en.html)
 * [https://www.tldrlegal.com/l/gpl-3.0] (https://www.tldrlegal.com/l/gpl-3.0)
