@@ -33,7 +33,7 @@ public class MaizeScanner implements PlugIn {
                                 // Will use the standard Look&Feel
                         }
                         
-                        UITool.showSplashWindow(UITool.getImageIcon("/cimmyt/maize/ui/icons/cimmyt_splash.png"), 2000, new Dimension(660,519), null, new ActionListener() {
+                        UITool.showSplashWindow(UITool.getImageIcon("/cimmyt/maize/ui/icons/cimmyt_splash.png"), 2000, new Dimension(660,651), null, new ActionListener() {
                                 @Override
                                 public void actionPerformed(ActionEvent e) {
                                         frame = new MaizeFrame();
