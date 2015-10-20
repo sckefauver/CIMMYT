@@ -4,8 +4,12 @@ import java.awt.Rectangle;
 import java.awt.image.RenderedImage;
 
 /**
+ * Copyright 2012 Jaume Casadesus
+ * <p>
+ * This file can not be copied and/or distributed without the express
+ * permission of Jaume Casadesus
  * 
- * @author jcasadesus
+ * @author Jaume Casadesus (jaume.casadesus@irta.cat)
  *
  */
 public class PixelMask {

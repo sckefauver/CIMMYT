@@ -7,7 +7,7 @@ import java.awt.Rectangle;
 
 
 /**
- * <p>Modified by Georges El-Haddad (george.dma@gmail.com)</p>
+ * <p>Modified by George El-Haddad (george.dma@gmail.com)</p>
  * 
  * @version 1.0;  23 Dec 2004
  * @author Dimiter Prodanov

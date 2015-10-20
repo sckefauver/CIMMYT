@@ -6,50 +6,24 @@ import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 
 /**
+ * Copyright 2012 Jaume Casadesus
+ * <p>
+ * This file can not be copied and/or distributed without the express
+ * permission of Jaume Casadesus
+ * </p>
+ * 
  * <p>Re-Implemented in July 2012 to remove dependence from JAI
  * With this version BreedPix does not require installing JAI.</p>
  * 
- * <p>Modified by Georges El-Haddad (george.dma@gmail.com)</p>
+ * <p>Modified by George El-Haddad (george.dma@gmail.com) to work with
+ * CIMMY Maize project, with permission from Jaume Casadesus.</p>
  * 
- * @author jcasadesus
- *
+ * @author Jaume Casadesus (jaume.casadesus@irta.cat)
+ * 
+ * 
  */
 public class PicVIOperation {
 
-        // input names
-//        public static final String PARAMETER_ROI = "roi";
-//        private static final String[] inputNames = new String[] { PARAMETER_ROI };
-
-        // output names
-//        public static final String RESULT_IHS_I = "Intensity";
-//        public static final String RESULT_IHS_H = "Hue";
-//        public static final String RESULT_IHS_S = "Saturation";
-//        public static final String RESULT_Lab_L = "Lightness";
-//        public static final String RESULT_Lab_a = "a*";
-//        public static final String RESULT_Lab_b = "b*";
-//        public static final String RESULT_Luv_u = "u*";
-//        public static final String RESULT_Luv_v = "v*";
-//        public static final String RESULT_GA = "GA";
-//        public static final String RESULT_GGA = "GGA";
-//        public static final String RESULT_GA_ROI = "GA_ROI";
-//        public static final String RESULT_GGA_ROI = "GGA_ROI";
-
-
-//        private static final String[] outputNames = new String[] {
-//                RESULT_IHS_I,
-//                RESULT_IHS_H,
-//                RESULT_IHS_S,
-//                RESULT_Lab_L,
-//                RESULT_Lab_a,
-//                RESULT_Lab_b,
-//                RESULT_Luv_u,
-//                RESULT_Luv_v,
-//                RESULT_GA,
-//                RESULT_GGA,
-//                RESULT_GA_ROI,
-//                RESULT_GGA_ROI
-//        };
-        
         private static final float INV_255 = 1.0f / 255.0f;
         private static final float MIN_H_GA = 60;
         private static final float MAX_H = 180;
@@ -147,7 +121,7 @@ public class PicVIOperation {
                 // convert meanRGB to CIELuv
                 float[] LuvCoords = CIEXYZtoLuv(xyzCoords, new float[3]);
                 
-                //TODO get rid of these, use something else for debugging
+                //TODO use a logger for debugging
 //                System.out.println("meanRGB=[" + meanRGB[0] + "," + meanRGB[1] + "," + meanRGB[2] + "]");
 //                System.out.println("HSB=[" + hsiCoords[0] + "," + hsiCoords[1] + "," + hsiCoords[2] + "]");
 //                System.out.println("XYZ=[" + xyzCoords[0] + "," + xyzCoords[1] + "," + xyzCoords[2] + "]");
@@ -279,6 +253,7 @@ public class PicVIOperation {
                 System.out.println("Luv=[" + Luv[0] + ", " + Luv[1] + ", " + Luv[2] + "]");
         }
         
+        //Test Stub
         public static void main(String[] args) {
                 float[] RED = new float[]   { 255, 0, 0 };
                 float[] GREEN = new float[] { 0, 255, 0 };

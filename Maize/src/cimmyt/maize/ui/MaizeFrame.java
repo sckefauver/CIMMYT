@@ -7,6 +7,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
+import cimmyt.maize.ui.breedpix.BreedPixPanel;
 import cimmyt.maize.ui.canopymacro.CanopyLevelMacroPanel;
 import cimmyt.maize.ui.scanner.ScannerPanel;
 import cimmyt.maize.ui.tools.UITool;
@@ -25,9 +26,11 @@ public class MaizeFrame extends JFrame {
         private JTabbedPane tabbedPane = null;
         private ScannerPanel scannerPanel = null;
         private CanopyLevelMacroPanel canopyMacroPanel = null;
+        private BreedPixPanel breedPixPanel = null;
 
         private static boolean scannerRunning = false;
         private static boolean macrosRunning = false;
+        private static boolean breedPixRunning = false;
         
         public MaizeFrame() {
                 init();
@@ -36,10 +39,12 @@ public class MaizeFrame extends JFrame {
         private final void init() {
                 scannerPanel = new ScannerPanel();
                 canopyMacroPanel = new CanopyLevelMacroPanel();
+                breedPixPanel = new BreedPixPanel();
                 
                 tabbedPane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);
                 tabbedPane.addTab("Scanner", scannerPanel);
                 tabbedPane.addTab("Canopy Macros", canopyMacroPanel);
+                tabbedPane.addTab("BreedPix", breedPixPanel);
                 
                 // ---------------------------------------------------
                 
@@ -65,12 +70,20 @@ public class MaizeFrame extends JFrame {
                 return macrosRunning;
         }
         
+        public static final boolean isBreedPixRunning() {
+                return breedPixRunning;
+        }
+        
         public static final void setScannerRunning(boolean running) {
                 scannerRunning = running;
         }
         
         public static final void setMacroRunning(boolean running) {
                 macrosRunning = running;
+        }
+        
+        public static final void setBreedPixRunning(boolean running) {
+                breedPixRunning = running;
         }
         
         private final void exit() {
@@ -88,6 +101,14 @@ public class MaizeFrame extends JFrame {
                                 }
                                 
                                 sb.append(" \"Canopy Macros\"");
+                        }
+                        
+                        if(breedPixRunning) {
+                                if(macrosRunning || scannerRunning) {
+                                        sb.append(" and");
+                                }
+                                
+                                sb.append(" \"BreedPix\"");
                         }
                         
                         sb.append(". Exiting now may leave results unfinished, still exit ?");

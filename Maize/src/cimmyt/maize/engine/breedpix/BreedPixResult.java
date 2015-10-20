@@ -9,18 +9,18 @@ package cimmyt.maize.engine.breedpix;
  */
 public class BreedPixResult {
         
-//        public static final String RESULT_IHS_I = "Intensity";
-//        public static final String RESULT_IHS_H = "Hue";
-//        public static final String RESULT_IHS_S = "Saturation";
-//        public static final String RESULT_Lab_L = "Lightness";
-//        public static final String RESULT_Lab_a = "a*";
-//        public static final String RESULT_Lab_b = "b*";
-//        public static final String RESULT_Luv_u = "u*";
-//        public static final String RESULT_Luv_v = "v*";
-//        public static final String RESULT_GA = "GA";
-//        public static final String RESULT_GGA = "GGA";
-//        public static final String RESULT_GA_ROI = "GA_ROI";
-//        public static final String RESULT_GGA_ROI = "GGA_ROI";
+//        RESULT_IHS_I = "Intensity";
+//        RESULT_IHS_H = "Hue";
+//        RESULT_IHS_S = "Saturation";
+//        RESULT_Lab_L = "Lightness";
+//        RESULT_Lab_a = "a*";
+//        RESULT_Lab_b = "b*";
+//        RESULT_Luv_u = "u*";
+//        RESULT_Luv_v = "v*";
+//        RESULT_GA = "GA";
+//        RESULT_GGA = "GGA";
+//        RESULT_GA_ROI = "GA_ROI";
+//        RESULT_GGA_ROI = "GGA_ROI";
         
         private float ihs_i = -1;
         private float ihs_h = -1;
