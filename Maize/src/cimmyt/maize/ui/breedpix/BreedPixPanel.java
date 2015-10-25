@@ -12,12 +12,15 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JTextField;
@@ -42,6 +45,15 @@ public class BreedPixPanel extends JPanel {
         private JTextField batchInputField = null;
         private JButton batchInputButton = null;
         
+        private JCheckBox saveGaImageCheckBox = null;
+        private JCheckBox saveGgaImageCheckBox = null;
+        private JTextField saveImageField = null;
+        private JButton saveImageButton = null;
+        
+        private JLabel resultsFileLabel = null;
+        private JTextField resultsFileField = null;
+        private JButton resultsFileButton = null;
+        
         private JPanel optionsPanel = null;
         
         private JPanel buttonPanel = null;
@@ -50,6 +62,8 @@ public class BreedPixPanel extends JPanel {
         
         private String recentDir = null;
         private File batchInputDir = null;
+        private File saveImageDir = null;
+        private File saveResultsFile = null;
         
         public BreedPixPanel() {
                 batchInputLabel = new JLabel("Batch Inputs:");
@@ -69,15 +83,71 @@ public class BreedPixPanel extends JPanel {
                 
               //----------------------------------------------------------------
                 
+                saveGaImageCheckBox = new JCheckBox("Save GA", false);
+                saveGaImageCheckBox.setFocusable(false);
+                saveGaImageCheckBox.setSelected(false);
+                saveGaImageCheckBox.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                                saveGaImageCheckBox_actionPerformed();
+                        }
+                });
+                
+                saveGgaImageCheckBox = new JCheckBox("GGA Images?", false);
+                saveGgaImageCheckBox.setFocusable(false);
+                saveGgaImageCheckBox.setSelected(false);
+                saveGgaImageCheckBox.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                                saveGgaImageCheckBox_actionPerformed();
+                        }
+                });
+                
+                saveImageField = new JTextField(20);
+                saveImageField.setEditable(false);
+                saveImageField.setBackground(null);
+                
+                saveImageButton = new JButton("...");
+                saveImageButton.setEnabled(false);
+                saveImageButton.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                                saveImageButton_actionPerformed();
+                        }
+                });
+                
+              //----------------------------------------------------------------
+                
+                resultsFileLabel = new JLabel("Results File:");
+                resultsFileLabel.setHorizontalAlignment(JLabel.RIGHT);
+                
+                resultsFileField = new JTextField(20);
+                resultsFileField.setEditable(false);
+                resultsFileField.setBackground(Color.WHITE);
+                
+                resultsFileButton = new JButton("...");
+                resultsFileButton.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                                resultsFileButton_actionPerformed();  
+                        }
+                });
+                
+              //----------------------------------------------------------------
+                
                 double spacer = 5;
                 double[][] layoutSize = {
-                                //                   0,                        2,                             4
-                                {TableLayout.PREFERRED, spacer, TableLayout.FILL, spacer, TableLayout.PREFERRED},
+                                //                   0,                             2,                        4,                             6
+                                {TableLayout.PREFERRED, spacer, TableLayout.PREFERRED, spacer, TableLayout.FILL, spacer, TableLayout.PREFERRED},
                                 {TableLayout.PREFERRED, //0
                                  spacer,
                                  TableLayout.PREFERRED, //2
                                  spacer,
-                                 TableLayout.PREFERRED  //4
+                                 TableLayout.PREFERRED, //4
+                                 spacer,
+                                 TableLayout.PREFERRED, //6
+                                 spacer,
+                                 TableLayout.PREFERRED  //8
                                 }
                 };
                 
@@ -85,14 +155,20 @@ public class BreedPixPanel extends JPanel {
                 optionsPanel.setBorder(BorderFactory.createTitledBorder("Macro Options"));
                 optionsPanel.setLayout(new TableLayout(layoutSize));
                 optionsPanel.add(batchInputLabel,      "0, 0");
-                optionsPanel.add(batchInputField,      "2, 0");
-                optionsPanel.add(batchInputButton,     "4, 0");
+                optionsPanel.add(batchInputField,      "2, 0, 4");
+                optionsPanel.add(batchInputButton,     "6, 0");
+                optionsPanel.add(saveGaImageCheckBox,  "0, 2");
+                optionsPanel.add(saveGgaImageCheckBox, "2, 2");
+                optionsPanel.add(saveImageField,       "4, 2");
+                optionsPanel.add(saveImageButton,      "6, 2");
+                optionsPanel.add(resultsFileLabel,     "0, 4");
+                optionsPanel.add(resultsFileField,     "2, 4, 4");
+                optionsPanel.add(resultsFileButton,    "6, 4");
                 
                 runButton = new JButton("Run BreedPix");
                 runButton.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                                MaizeFrame.setBreedPixRunning(true);
                                 runButton_actionPerformed();
                         }
                 });
@@ -116,6 +192,16 @@ public class BreedPixPanel extends JPanel {
         }
         
         private final void runButton_actionPerformed() {
+                if(batchInputDir == null) {
+                        JOptionPane.showMessageDialog(this, "Select a folder to read the input images", "Empty Batch Input", JOptionPane.INFORMATION_MESSAGE);
+                        return;
+                }
+                
+                if(saveResultsFile == null) {
+                        JOptionPane.showMessageDialog(this, "Select a results file name and location to store the results of the batch process", "Empty Results File", JOptionPane.INFORMATION_MESSAGE);
+                        return;
+                }
+                
                 Thread breedPixThread = new Thread(new Runnable() {
                         @Override
                         public void run() {
@@ -125,6 +211,7 @@ public class BreedPixPanel extends JPanel {
                                                 runButton.setEnabled(false);
                                                 progressBar.setIndeterminate(true);
                                                 progressBar.setString("Running BreedPix ...");
+                                                MaizeFrame.setBreedPixRunning(true);
                                         }
                                 });
                                 
@@ -142,6 +229,7 @@ public class BreedPixPanel extends JPanel {
                                 });
                         }
                 });
+                
                 breedPixThread.start();
         }
         
@@ -157,44 +245,120 @@ public class BreedPixPanel extends JPanel {
                 File[] imageFiles = batchInputDir.listFiles();
                 PicVIOperation picViOperation = new PicVIOperation();
                 File imageFile = null;
+                String ext = null;
                 String fileName = null;
+                String imagePath = null;
+                if(saveImageDir != null) {
+                        imagePath = saveImageDir.getAbsolutePath();
+                }
+                
+                StringBuilder resultBuilder = new StringBuilder();
+                resultBuilder.append("Image Name,Intensity, Hue, Saturation, Lightness, a*, b*, u*, v*, GA, GGA");
+                resultBuilder.append(System.getProperty("line.separator"));
                 
                 for(int i=0; i < imageFiles.length; i++) {
                         imageFile = imageFiles[i];
-                        BufferedImage image = openImage(imageFile);
                         fileName = imageFile.getName();
-                        fileName = fileName.substring(0, fileName.lastIndexOf('.'));
+                        ext = fileName.substring(fileName.lastIndexOf('.')+1).toLowerCase();
                         
-                        BufferedImage scaledRenderedImage = reduceToMaxSize(image, 1024*768);
-                        BreedPixResult result = picViOperation.execute(scaledRenderedImage);
+//                        When Fiji Uses Java 7 by default we will use the switch statement
+//                        
+//                        switch(ext) {
+//                                case "jpg":
+//                                case "jpeg":
+//                                case "png":
+//                                case "tif":
+//                                case "tiff":
+//                        }
                         
-                        PixelMask gaRoi = result.getGa_roi();
-                        PixelMask ggaRoi = result.getGga_roi();
-                        
-                        BufferedImage gaRoiImage = paintBWNotROI(scaledRenderedImage, gaRoi, fileName);
-                        BufferedImage ggaRoiImage = paintBWNotROI(scaledRenderedImage, ggaRoi, fileName);
-                        
-                        String savePath = batchInputDir.getAbsolutePath();
-                        
-                        try {
-                                ImageIO.write(gaRoiImage, "jpg", new File(savePath+File.separator+fileName+"_GA.JPG"));
-                                ImageIO.write(ggaRoiImage, "jpg", new File(savePath+File.separator+fileName+"_GGA.JPG"));
-                        }
-                        catch(IOException ioe) {
-                                IJ.log("Error saving ROI image: " + fileName);
-                                IJ.log("Error: "+ioe.getMessage());
-                        }
-                        finally {
-                                gaRoiImage = null;
-                                ggaRoiImage = null;
-                                gaRoi = null;
-                                ggaRoi = null;
+                        if(ext.equals("jpg") || ext.equals("jpeg") || ext.equals("png") || ext.equals("tif") || ext.equals("tiff")) {
+                                fileName = fileName.substring(0, fileName.lastIndexOf('.'));
+                                
+                                BufferedImage image = openImage(imageFile);
+                                BufferedImage scaledRenderedImage = reduceToMaxSize(image, 1024*768);
+                                BreedPixResult result = picViOperation.execute(scaledRenderedImage);
+                                
+                                if( result != null) {
+                                        if(saveGaImageCheckBox.isSelected()) {
+                                                PixelMask gaRoi = result.getGa_roi();
+                                                BufferedImage gaRoiImage = paintBWNotROI(scaledRenderedImage, gaRoi, fileName);
+                                                
+                                                try {
+                                                        ImageIO.write(gaRoiImage, "jpg", new File(imagePath+File.separator+fileName+"_GA.JPG"));
+                                                }
+                                                catch(IOException ioe) {
+                                                        IJ.log("Error saving GA ROI image: " + fileName);
+                                                        IJ.log("Error: "+ioe.getMessage());
+                                                }
+                                                finally {
+                                                        gaRoi = null;
+                                                        gaRoiImage = null;
+                                                }
+                                        }
+                                        
+                                        if(saveGgaImageCheckBox.isSelected()) {
+                                                PixelMask ggaRoi = result.getGga_roi();
+                                                BufferedImage ggaRoiImage = paintBWNotROI(scaledRenderedImage, ggaRoi, fileName);
+                                                
+                                                try {
+                                                        ImageIO.write(ggaRoiImage, "jpg", new File(imagePath+File.separator+fileName+"_GGA.JPG"));
+                                                }
+                                                catch(IOException ioe) {
+                                                        IJ.log("Error saving GGA ROI image: " + fileName);
+                                                        IJ.log("Error: "+ioe.getMessage());
+                                                }
+                                                finally {
+                                                        ggaRoi = null;
+                                                        ggaRoiImage = null;
+                                                }
+                                        }
+                                        
+                                        resultBuilder.append(fileName).append('.').append(ext);
+                                        resultBuilder.append(',');
+                                        resultBuilder.append(result.getIhs_i());
+                                        resultBuilder.append(',');
+                                        resultBuilder.append(result.getIhs_h());
+                                        resultBuilder.append(',');
+                                        resultBuilder.append(result.getIhs_s());
+                                        resultBuilder.append(',');
+                                        resultBuilder.append(result.getLab_l());
+                                        resultBuilder.append(',');
+                                        resultBuilder.append(result.getLab_a());
+                                        resultBuilder.append(',');
+                                        resultBuilder.append(result.getLab_b());
+                                        resultBuilder.append(',');
+                                        resultBuilder.append(result.getLuv_u());
+                                        resultBuilder.append(',');
+                                        resultBuilder.append(result.getLuv_v());
+                                        resultBuilder.append(',');
+                                        resultBuilder.append(result.getGa());
+                                        resultBuilder.append(',');
+                                        resultBuilder.append(result.getGga());
+                                        resultBuilder.append(System.getProperty("line.separator"));
+                                }
+                                
                                 scaledRenderedImage = null;
-                                result = null;
                                 image = null;
                                 fileName = null;
                                 imageFile = null;
                         }
+                }
+                
+                printResults(resultBuilder.toString());
+        }
+        
+        private final void printResults(String results) {
+                try {
+                        FileWriter fw = new FileWriter(saveResultsFile);
+                        fw.write(results);
+                        fw.flush();
+                        fw.close();
+                        fw = null;
+                }
+                catch(IOException ioe) {
+                        IJ.log("Error saving results file: " + saveResultsFile.getAbsoluteFile());
+                        IJ.log("Error: "+ioe.getMessage());
+                        IJ.error("I/O Error", "There was an error while saving the results file.");
                 }
         }
         
@@ -209,6 +373,54 @@ public class BreedPixPanel extends JPanel {
                 }
                 
                 return image;
+        }
+        
+        private final void saveGaImageCheckBox_actionPerformed() {
+                if(saveGaImageCheckBox.isSelected()) {
+                        saveImageButton.setEnabled(true);
+                        saveImageField.setBackground(Color.WHITE);
+                }
+                else {
+                        if(!saveGgaImageCheckBox.isSelected()) {
+                                saveImageButton.setEnabled(false);
+                                saveImageField.setBackground(null);
+                        }
+                }
+        }
+        
+        private final void saveGgaImageCheckBox_actionPerformed() {
+                if(saveGgaImageCheckBox.isSelected()) {
+                        saveImageButton.setEnabled(true);
+                        saveImageField.setBackground(Color.WHITE);
+                }
+                else {
+                        if(!saveGaImageCheckBox.isSelected()) {
+                                saveImageButton.setEnabled(false);
+                                saveImageField.setBackground(null);
+                        }
+                }
+        }
+        
+        private final void saveImageButton_actionPerformed() {
+                saveImageDir = FileOpen.getFile("Select GA/GGA images folder", (recentDir == null ? System.getProperty("user.dir") : recentDir), JFileChooser.DIRECTORIES_ONLY , "GA/GGA Images Folder", (String[])null);
+                if(saveImageDir != null) {
+                        recentDir = saveImageDir.getAbsolutePath();
+                        saveImageField.setText(saveImageDir.getAbsolutePath());
+                }
+        }
+        
+        private final void resultsFileButton_actionPerformed() {
+                saveResultsFile = FileOpen.getFile("Name Results File", (recentDir == null ? System.getProperty("user.dir") : recentDir), JFileChooser.FILES_AND_DIRECTORIES , "Results File (*.xls)", "xls");
+                if(saveResultsFile != null) {
+                        recentDir = saveResultsFile.getParentFile().getAbsolutePath();
+                        
+                        if(!saveResultsFile.getName().endsWith(".xls")) {
+                                String tmp = saveResultsFile.getAbsolutePath();
+                                saveResultsFile = new File(tmp+".xls");
+                        }
+                        
+                        resultsFileField.setText(saveResultsFile.getAbsolutePath());
+                }
         }
         
         /**
