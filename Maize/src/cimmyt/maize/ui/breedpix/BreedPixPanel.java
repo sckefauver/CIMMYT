@@ -152,7 +152,7 @@ public class BreedPixPanel extends JPanel {
                 };
                 
                 optionsPanel = new JPanel();
-                optionsPanel.setBorder(BorderFactory.createTitledBorder("Macro Options"));
+                optionsPanel.setBorder(BorderFactory.createTitledBorder("BreedPix Options"));
                 optionsPanel.setLayout(new TableLayout(layoutSize));
                 optionsPanel.add(batchInputLabel,      "0, 0");
                 optionsPanel.add(batchInputField,      "2, 0, 4");
