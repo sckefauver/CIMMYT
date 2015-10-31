@@ -1,5 +1,5 @@
 #CIMMYT
-Maize Research FIJI Plugin v0.10 [Download Jar Here] (https://github.com/george-haddad/CIMMYT/releases/download/v0.10/CIMMYT_Maize_Scanner_v0.10.jar)
+Maize Research FIJI Plugin v0.11 [Download Jar Here] (https://github.com/george-haddad/CIMMYT/releases/download/v0.11/CIMMYT_Maize_Scanner_v0.11.jar)
 
 ##Pre-Installation Requirements
 
@@ -9,13 +9,13 @@ Maize Research FIJI Plugin v0.10 [Download Jar Here] (https://github.com/george-
 
 ##Installation
 
-1. Download the CIMMYT Maize Scanner Jar file [Here] (https://github.com/george-haddad/CIMMYT/releases/download/v0.10/CIMMYT_Maize_Scanner_v0.10.jar)
-2. Download the dependency Jar file *tablelayout.jar* [Here] (https://github.com/george-haddad/CIMMYT/releases/download/v0.10/tablelayout.jar)
-3. Place the *CIMMYT_Maize_Scanner_v0.10.jar* file in Fiji's plugins folder `Fiji.app\plugins`
+1. Download the CIMMYT Maize Scanner Jar file [Here] (https://github.com/george-haddad/CIMMYT/releases/download/v0.11/CIMMYT_Maize_Scanner_v0.11.jar)
+2. Download the dependency Jar file *tablelayout.jar* [Here] (https://github.com/george-haddad/CIMMYT/releases/download/v0.11/tablelayout.jar)
+3. Place the *CIMMYT_Maize_Scanner_v0.11.jar* file in Fiji's plugins folder `Fiji.app\plugins`
 4. Place the dependency *tablelayout.jar* jar file in Fiji's plugins folder `Fiji.app\plugins`
 5. Start up Fiji
 
-*note* If you are running a version of Fiji that comes bundled with Java6, then please try to download the Java6 backward compatible version of the CIMMYT Maize Scanner plugin *"CIMMYT_Maize_Scanner_v0.10_java6.jar"* [Here] (https://github.com/george-haddad/CIMMYT/releases/download/v0.10/CIMMYT_Maize_Scanner_v0.10_java6.jar)
+*note* If you are running a version of Fiji that comes bundled with Java6, then please try to download the Java6 backward compatible version of the CIMMYT Maize Scanner plugin *"CIMMYT_Maize_Scanner_v0.11_java6.jar"* [Here] (https://github.com/george-haddad/CIMMYT/releases/download/v0.11/CIMMYT_Maize_Scanner_v0.11_java6.jar)
 
 ##Installing Auto-Run Script
 
@@ -37,6 +37,11 @@ Image analysis tab allows the researcher to define an unlimited number of partic
 ![Plugin 3](https://github.com/george-haddad/CIMMYT/blob/master/Maize/screenshots/plugin_3.png)
 
 Canopy macros tab runs a batch macro processing on a user defined batch of images
+
+![Plugin 4](https://github.com/george-haddad/CIMMYT/blob/master/Maize/screenshots/plugin_4.png)
+
+BreedPix tab that will process batch images through the breedpix algorithm and optionally output GA/GGA imagees
+
 
 #Authors
 - George El-Haddad
