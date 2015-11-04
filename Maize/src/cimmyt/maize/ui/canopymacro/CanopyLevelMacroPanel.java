@@ -29,6 +29,8 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicButtonUI;
 import layout.TableLayout;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
@@ -53,9 +55,9 @@ public class CanopyLevelMacroPanel extends JPanel {
         private JTextField batchInputField = null;
         private JButton batchInputButton = null;
         
-        private JCheckBox saveHsbImagesCheckBox = null;
-        private JTextField saveHsbImagesField = null;
-        private JButton saveHsbImagesButton = null;
+        private JCheckBox saveImagesCheckBox = null;
+        private JTextField saveImagesField = null;
+        private JButton saveImagesButton = null;
         
         private JLabel resultsFileLabel = null;
         private JTextField resultsFileField = null;
@@ -63,6 +65,7 @@ public class CanopyLevelMacroPanel extends JPanel {
         
         private JPanel optionsPanel = null;
         private JTabbedPane macroTab = null;
+        private int vegTabIndex = 1;
         
         private JPanel buttonPanel = null;
         private JButton runButton = null;
@@ -70,7 +73,7 @@ public class CanopyLevelMacroPanel extends JPanel {
         
         private String recentDir = null;
         private File batchInputDir = null;
-        private File saveHsbDir = null;
+        private File saveImagesDir = null;
         private File saveResultsFile = null;
         
         private HashMap<String, MaizeMacroVars> macroMap = null;
@@ -95,23 +98,23 @@ public class CanopyLevelMacroPanel extends JPanel {
                 
                 //----------------------------------------------------------------
                 
-                saveHsbImagesCheckBox = new JCheckBox("Save HSB Images?", false);
-                saveHsbImagesCheckBox.setFocusable(false);
-                saveHsbImagesCheckBox.setSelected(false);
-                saveHsbImagesCheckBox.addActionListener(new ActionListener() {
+                saveImagesCheckBox = new JCheckBox("Save HSB Images?", false);
+                saveImagesCheckBox.setFocusable(false);
+                saveImagesCheckBox.setSelected(false);
+                saveImagesCheckBox.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                                saveHsbImagesCheckBox_actionPerformed();
+                                saveImagesCheckBox_actionPerformed();
                         }
                 });
                 
-                saveHsbImagesField = new JTextField(20);
-                saveHsbImagesField.setEditable(false);
-                saveHsbImagesField.setBackground(null);
+                saveImagesField = new JTextField(20);
+                saveImagesField.setEditable(false);
+                saveImagesField.setBackground(null);
                 
-                saveHsbImagesButton = new JButton("...");
-                saveHsbImagesButton.setEnabled(false);
-                saveHsbImagesButton.addActionListener(new ActionListener() {
+                saveImagesButton = new JButton("...");
+                saveImagesButton.setEnabled(false);
+                saveImagesButton.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
                                 saveHsbImagesButton_actionPerformed();
@@ -138,7 +141,14 @@ public class CanopyLevelMacroPanel extends JPanel {
                 //----------------------------------------------------------------
                 
                 macroTab = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);
-                addMacroPanelTab("Default", "Maize_CIMMYT_QuanitfyImageComponentsHSB_UBv8.ijm");
+                addMacroPanelTab("Default", "Maize_CIMMYT_QuanitfyImageComponentsHSB_UBv8.ijm", false);
+                
+                macroTab.addChangeListener(new ChangeListener() {
+                        @Override
+                        public void stateChanged(ChangeEvent e) {
+                                tabPanel_stateChanged(e);
+                        }
+                });
                 
                 //----------------------------------------------------------------
                 
@@ -160,9 +170,9 @@ public class CanopyLevelMacroPanel extends JPanel {
                 optionsPanel.add(batchInputLabel,      "0, 0");
                 optionsPanel.add(batchInputField,      "2, 0");
                 optionsPanel.add(batchInputButton,     "4, 0");
-                optionsPanel.add(saveHsbImagesCheckBox,"0, 2");
-                optionsPanel.add(saveHsbImagesField,   "2, 2");
-                optionsPanel.add(saveHsbImagesButton,  "4, 2");
+                optionsPanel.add(saveImagesCheckBox,"0, 2");
+                optionsPanel.add(saveImagesField,   "2, 2");
+                optionsPanel.add(saveImagesButton,  "4, 2");
                 optionsPanel.add(resultsFileLabel,     "0, 4");
                 optionsPanel.add(resultsFileField,     "2, 4");
                 optionsPanel.add(resultsFileButton,    "4, 4");
@@ -173,6 +183,7 @@ public class CanopyLevelMacroPanel extends JPanel {
                 runButton.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
+                                saveImagesCheckBox_actionPerformed();
                                 runButton_actionPerformed();
                         }
                 });
@@ -199,6 +210,26 @@ public class CanopyLevelMacroPanel extends JPanel {
         private final void runButton_actionPerformed() {
                 if(MaizeFrame.isMacroRunning()) {
                         JOptionPane.showMessageDialog(this, "A macro is already running, please wait until it finishes.", "Macro Already Running", JOptionPane.INFORMATION_MESSAGE);
+                        return;
+                }
+                
+                int index = macroTab.getSelectedIndex();
+                MaizeMacroVars macroVar = macroMap.get("" + index);
+                
+                if(macroVar.getBatchInputVar() == null) {
+                        JOptionPane.showMessageDialog(this, "Please select the batch inputs folder.", "Select Batch Inputs", JOptionPane.INFORMATION_MESSAGE);
+                        return;
+                }
+                
+                if(saveImagesCheckBox.isSelected()) {
+                        if(macroVar.getSaveImagesDirVar() == null) {
+                                JOptionPane.showMessageDialog(this, "Please select a folder to save images.", "Select Images Folder", JOptionPane.INFORMATION_MESSAGE);
+                                return;
+                        }
+                }
+                
+                if(macroVar.getSaveResultsFileVar() == null) {
+                        JOptionPane.showMessageDialog(this, "Please select a results file location.", "Select Results File", JOptionPane.INFORMATION_MESSAGE);
                         return;
                 }
                 
@@ -246,32 +277,32 @@ public class CanopyLevelMacroPanel extends JPanel {
                 }
         }
         
-        private final void saveHsbImagesCheckBox_actionPerformed() {
-                saveHsbImagesButton.setEnabled(saveHsbImagesCheckBox.isSelected());
+        private final void saveImagesCheckBox_actionPerformed() {
+                saveImagesButton.setEnabled(saveImagesCheckBox.isSelected());
                 String selection = null;
-                if(saveHsbImagesCheckBox.isSelected()) {
-                        saveHsbImagesField.setBackground(Color.WHITE);
+                if(saveImagesCheckBox.isSelected()) {
+                        saveImagesField.setBackground(Color.WHITE);
                         selection = "true";
                 }
                 else {
-                        saveHsbImagesField.setBackground(null);
+                        saveImagesField.setBackground(null);
                         selection = "false";
                 }
                 
                 int index = macroTab.getSelectedIndex();
                 MaizeMacroVars macroVar = macroMap.get(""+index);
-                macroVar.setSaveHsbImagesVar(selection);
+                macroVar.setSaveImagesVar(selection);
         }
         
         private final void saveHsbImagesButton_actionPerformed() {
-                saveHsbDir = FileOpen.getFile("Select HSB images folder", (recentDir == null ? System.getProperty("user.dir") : recentDir), JFileChooser.DIRECTORIES_ONLY , "HSB Images Folder", (String[])null);
-                if(saveHsbDir != null) {
-                        recentDir = saveHsbDir.getAbsolutePath();
-                        saveHsbImagesField.setText(saveHsbDir.getAbsolutePath());
+                saveImagesDir = FileOpen.getFile("Select HSB images folder", (recentDir == null ? System.getProperty("user.dir") : recentDir), JFileChooser.DIRECTORIES_ONLY , "HSB Images Folder", (String[])null);
+                if(saveImagesDir != null) {
+                        recentDir = saveImagesDir.getAbsolutePath();
+                        saveImagesField.setText(saveImagesDir.getAbsolutePath());
                         
                         int index = macroTab.getSelectedIndex();
                         MaizeMacroVars macroVar = macroMap.get(""+index);
-                        macroVar.setSaveHsbDirVar(saveHsbDir.getAbsolutePath());
+                        macroVar.setSaveImagesDirVar(saveImagesDir.getAbsolutePath());
                 }
         }
         
@@ -289,11 +320,11 @@ public class CanopyLevelMacroPanel extends JPanel {
                         
                         int index = macroTab.getSelectedIndex();
                         MaizeMacroVars macroVar = macroMap.get(""+index);
-                        macroVar.setSaveResultsFile(saveResultsFile.getAbsolutePath());
+                        macroVar.setSaveResultsFileVar(saveResultsFile.getAbsolutePath());
                 }
         }
         
-        private final void addMacroPanelTab(String tabName, String macroTemplateName) {
+        private final void addMacroPanelTab(String tabName, String macroTemplateName, boolean editable) {
                 InputStream macroInputStream = CanopyLevelMacroPanel.class.getResourceAsStream("/cimmyt/maize/ui/canopymacro/"+macroTemplateName);
                 if(macroInputStream != null) {
                         RSyntaxTextArea syntaxTextArea = new RSyntaxTextArea(20, 60);
@@ -312,7 +343,7 @@ public class CanopyLevelMacroPanel extends JPanel {
                                 }
                                 
                                 syntaxTextArea.setText(sb.toString());
-                                syntaxTextArea.setEditable(false);
+                                syntaxTextArea.setEditable(editable);
                                 RTextScrollPane syntaxScrollPane = new RTextScrollPane(syntaxTextArea);
                                 
                                 macroTab.addTab(tabName, syntaxScrollPane);
@@ -356,6 +387,24 @@ public class CanopyLevelMacroPanel extends JPanel {
                 }
         }
         
+        private final void tabPanel_stateChanged(ChangeEvent e) {
+                JTabbedPane tabby = (JTabbedPane) e.getSource();
+                int index = tabby.getSelectedIndex();
+                
+                if(index > 0) {
+                        saveImagesCheckBox.setText("Save Index1 Images?");
+                }
+                else {
+                        saveImagesCheckBox.setText("Save HSB Images?");
+                }
+                
+                MaizeMacroVars macroVar = macroMap.get("" + index);
+                batchInputField.setText(macroVar.getBatchInputVar());
+                saveImagesField.setText(macroVar.getSaveImagesDirVar());
+                resultsFileField.setText(macroVar.getSaveResultsFileVar());
+                saveImagesCheckBox.setSelected(macroVar.isSaveImages());
+        }
+        
         private final class CustomTabPanel extends JPanel {
                 
                 private static final long serialVersionUID = -3765960804880374737L;
@@ -382,7 +431,8 @@ public class CanopyLevelMacroPanel extends JPanel {
                         addButton.addActionListener(new ActionListener() {
                                 @Override
                                 public void actionPerformed(ActionEvent e) {
-                                        addMacroPanelTab("New", "Maize_CIMMYT_QuanitfyImageComponentsHSB_UBv8_template.ijm");
+                                        addMacroPanelTab("Veg Index "+vegTabIndex, "Maize_CIMMYT_QuanitfyImageComponentsHSB_UBv8_template.ijm", true);
+                                        vegTabIndex++;
                                 }
                         });
                         
@@ -399,7 +449,8 @@ public class CanopyLevelMacroPanel extends JPanel {
                                 @Override
                                 public void actionPerformed(ActionEvent e) {
                                         int i = macroTab.indexOfTabComponent(CustomTabPanel.this);
-                                        if (i != -1) {
+                                        //Do not close first tab
+                                        if (i != -1 && i > 0) {
                                                 macroTab.remove(i);
                                         }
                                 }

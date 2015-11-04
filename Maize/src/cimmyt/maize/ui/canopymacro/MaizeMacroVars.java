@@ -10,8 +10,8 @@ package cimmyt.maize.ui.canopymacro;
 public class MaizeMacroVars extends MacroVars {
 
         private String batchInputPrev = null;
-        private String saveHsbImagesPrev = null;
-        private String saveHsbDirPrev = null;
+        private String saveImagesPrev = null;
+        private String saveImagesDirPrev = null;
         private String saveResultsFilePrev = null;
         
         public MaizeMacroVars() {
@@ -35,38 +35,38 @@ public class MaizeMacroVars extends MacroVars {
                 syntaxTextArea.setCaretPosition(0);
         }
         
-        public final void setSaveHsbImagesVar(String variableName) {
+        public final void setSaveImagesVar(String variableName) {
                 String macroTxt = syntaxTextArea.getText();
                 
-                if(macroTxt.indexOf("$P{save_hsb_images}") != -1) {
-                        saveHsbImagesPrev = "saveHsb = $P{save_hsb_images}";
+                if(macroTxt.indexOf("$P{save_images}") != -1) {
+                        saveImagesPrev = "saveImages = $P{save_images}";
                 }
                 
-                String newTxt = macroTxt.replace(saveHsbImagesPrev, "saveHsb = "+variableName);
+                String newTxt = macroTxt.replace(saveImagesPrev, "saveImages = "+variableName);
                 syntaxTextArea.setText(newTxt);
                 
-                saveHsbImagesPrev = new String("saveHsb = "+variableName);
+                saveImagesPrev = new String("saveImages = "+variableName);
                 syntaxTextArea.setCaretPosition(0);
         }
         
-        public final void setSaveHsbDirVar(String variableName) {
+        public final void setSaveImagesDirVar(String variableName) {
                 String macroTxt = syntaxTextArea.getText();
                 
-                if(macroTxt.indexOf("$P{save_hsb_dir}") != -1) {
-                        saveHsbDirPrev = "$P{save_hsb_dir}";
+                if(macroTxt.indexOf("$P{save_images_dir}") != -1) {
+                        saveImagesDirPrev = "$P{save_images_dir}";
                 }
                 
                 variableName = variableName.replaceAll("\\\\", "\\\\\\\\");
                 variableName = variableName + "\\\\";
                 
-                String newTxt = macroTxt.replace(saveHsbDirPrev, variableName);
+                String newTxt = macroTxt.replace(saveImagesDirPrev, variableName);
                 syntaxTextArea.setText(newTxt);
                 
-                saveHsbDirPrev = new String(variableName);
+                saveImagesDirPrev = new String(variableName);
                 syntaxTextArea.setCaretPosition(0);
         }
         
-        public final void setSaveResultsFile(String variableName) {
+        public final void setSaveResultsFileVar(String variableName) {
                 String macroTxt = syntaxTextArea.getText();
                 
                 if(macroTxt.indexOf("$P{save_results_file}") != -1) {
@@ -80,5 +80,26 @@ public class MaizeMacroVars extends MacroVars {
                 
                 saveResultsFilePrev = new String(variableName);
                 syntaxTextArea.setCaretPosition(0);
+        }
+
+        public final String getBatchInputVar() {
+                return batchInputPrev;
+        }
+
+        public final String getSaveImagesDirVar() {
+                return saveImagesDirPrev;
+        }
+
+        public final String getSaveResultsFileVar() {
+                return saveResultsFilePrev;
+        }
+        
+        public final boolean isSaveImages() {
+                if(saveImagesPrev != null) {
+                        return saveImagesPrev.toLowerCase().contains("true");  
+                }
+                else {
+                        return false;
+                }
         }
 }

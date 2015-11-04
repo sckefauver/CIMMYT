@@ -1,8 +1,8 @@
 //Macro to batch process apply hue (HSB/HSV) thresholding of vegetation components
 
 input = "$P{batch_input}";
-saveHsb = $P{save_hsb_images};
-hsbDir = "$P{save_hsb_dir}";
+saveImages = $P{save_images};
+imagesDir = "$P{save_images_dir}";
 list = getFileList(input);
 
 setBatchMode(true);
@@ -53,8 +53,8 @@ function processSoil(originalID, fileName) {
         run("Invert");
         run("Despeckle");
 
-        if(saveHsb) {
-                saveAs("Tiff", hsbDir + fileName + "_soil-hsb");
+        if(saveImages) {
+                saveAs("Tiff", imagesDir + fileName + "_soil-hsb");
         }
 
         run("Invert");
@@ -82,8 +82,8 @@ function processGreenVeg(originalID, fileName) {
         run("Invert");
         run("Despeckle");
 
-        if(saveHsb) {
-                saveAs("Tiff", hsbDir + fileName + "_greenveg-hsb");
+        if(saveImages) {
+                saveAs("Tiff", imagesDir + fileName + "_greenveg-hsb");
         }
 
         run("Invert");
@@ -111,8 +111,8 @@ function processYellowVeg(originalID, fileName) {
         run("Invert");
         run("Despeckle");
 
-        if(saveHsb) {
-                saveAs("Tiff", hsbDir + fileName + "_yellowveg-hsb");
+        if(saveImages) {
+                saveAs("Tiff", imagesDir + fileName + "_yellowveg-hsb");
         }
 
         run("Invert");
@@ -140,8 +140,8 @@ function processBleachedVeg(originalID, fileName) {
         run("Invert");
         run("Despeckle");
 
-        if(saveHsb) {
-                saveAs("Tiff", hsbDir + fileName + "_bleachedveg-hsb");
+        if(saveImages) {
+                saveAs("Tiff", imagesDir + fileName + "_bleachedveg-hsb");
         }
 
         run("Invert");

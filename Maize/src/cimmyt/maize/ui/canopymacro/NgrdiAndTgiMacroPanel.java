@@ -7,10 +7,15 @@ import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -192,6 +197,8 @@ public class NgrdiAndTgiMacroPanel extends JPanel {
                 runButton.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
+                                saveTgiImagesCheckBox_actionPerformed();
+                                saveNgrdiImagesCheckBox_actionPerformed();
                                 runButton_actionPerformed();
                         }
                 });
@@ -223,6 +230,30 @@ public class NgrdiAndTgiMacroPanel extends JPanel {
                         return;
                 }
                 
+                if(batchInputDir == null) {
+                        JOptionPane.showMessageDialog(this, "Please select the batch inputs folder.", "Select Batch Inputs", JOptionPane.INFORMATION_MESSAGE);
+                        return;
+                }
+                
+                if(saveNgrdiImagesCheckBox.isSelected()) {
+                        if(saveNgrdiDir == null) {
+                                JOptionPane.showMessageDialog(this, "Please select a folder to save NGRDI images.", "Select NGRDI Folder", JOptionPane.INFORMATION_MESSAGE);
+                                return;
+                        }
+                }
+                
+                if(saveTgiImagesCheckBox.isSelected()) {
+                        if(saveTgiDir == null) {
+                                JOptionPane.showMessageDialog(this, "Please select a folder to save TGI images.", "Select TGI Folder", JOptionPane.INFORMATION_MESSAGE);
+                                return;
+                        }
+                }
+                
+                if(saveResultsFile == null) {
+                        JOptionPane.showMessageDialog(this, "Please select a results file location.", "Select Results File", JOptionPane.INFORMATION_MESSAGE);
+                        return;
+                }
+                
                 Thread macroThread = new Thread(new Runnable() {
                         @Override
                         public void run() {
@@ -238,6 +269,7 @@ public class NgrdiAndTgiMacroPanel extends JPanel {
                                 
                                 String macroCode = macroVars.getMacroCode();
                                 IJ.runMacro(macroCode);
+                                reformatResultsFile();
                                 
                                 EventQueue.invokeLater(new Runnable() {
                                         @Override
@@ -307,9 +339,6 @@ public class NgrdiAndTgiMacroPanel extends JPanel {
                 
                 return syntaxScrollPane;
         }
-        
-        
-        
         
         private final void batchInputButton_actionPerformed() {
                 batchInputDir = FileOpen.getFile("Select batch input folder", (recentDir == null ? System.getProperty("user.dir") : recentDir), JFileChooser.DIRECTORIES_ONLY, "Batch Image Folder", (String[]) null);
@@ -382,4 +411,89 @@ public class NgrdiAndTgiMacroPanel extends JPanel {
                         macroVars.setSaveResultsFile(saveResultsFile.getAbsolutePath());
                 }
         }
+        
+        private final void reformatResultsFile() {
+                try {
+                        List<NgrdiTgiPojo> resultList = new ArrayList<NgrdiTgiPojo>();
+                        BufferedReader br = new BufferedReader(new FileReader(saveResultsFile));
+                        String line1 = null;
+                        String line2 = null;
+                        br.readLine(); //Skip the header
+                        while(true) {
+                                line1 = br.readLine();
+                                
+                                if(line1 == null) {
+                                        break;
+                                }
+                                
+                                line2 = br.readLine();
+                                String[] arrLine1 = line1.split("\t");
+                                String[] arrLine2 = line2.split("\t");
+                                resultList.add(new NgrdiTgiPojo(arrLine1[3], arrLine1[1], arrLine1[2], arrLine2[1], arrLine2[2]));
+                        }
+                        
+                        br.close();
+                        br = null;
+                        
+                        BufferedWriter bw = new BufferedWriter(new FileWriter(saveResultsFile, false));
+                        bw.write("Image Name\tNGRDI-Mean\tNGRDI-StDev\tTGI-Mean\tTGI-StDev"+System.getProperty("line.separator"));
+                        for(int i=0; i < resultList.size(); i++) {
+                                NgrdiTgiPojo pojo = resultList.get(i);
+                                bw.write(pojo.getImageName());
+                                bw.write('\t');
+                                bw.write(pojo.getnMean());
+                                bw.write('\t');
+                                bw.write(pojo.getnStd());
+                                bw.write('\t');
+                                bw.write(pojo.gettMean());
+                                bw.write('\t');
+                                bw.write(pojo.gettStd());
+                                bw.write(System.getProperty("line.separator"));
+                                bw.flush();
+                        }
+                        
+                        bw.close();
+                        bw = null;
+                }
+                catch (IOException e) {
+                        IJ.error("Error Formating Results File", "There was an error while reformatting the results file \""+saveResultsFile.getName()+"\"");
+                }
+        }
+        
+        private class NgrdiTgiPojo {
+                private String imageName = null;
+                private String nMean = null;
+                private String nStd = null;
+                private String tMean = null;
+                private String tStd = null;
+                
+                NgrdiTgiPojo(String imageName, String nMean, String nStd, String tMean, String tStd) {
+                        this.imageName = imageName;
+                        this.nMean = nMean;
+                        this.nStd = nStd;
+                        this.tMean = tMean;
+                        this.tStd = tStd;
+                }
+
+                public final String getImageName() {
+                        return imageName;
+                }
+
+                public final String getnMean() {
+                        return nMean;
+                }
+
+                public final String getnStd() {
+                        return nStd;
+                }
+
+                public final String gettMean() {
+                        return tMean;
+                }
+
+                public final String gettStd() {
+                        return tStd;
+                }
+        }
 }
+
