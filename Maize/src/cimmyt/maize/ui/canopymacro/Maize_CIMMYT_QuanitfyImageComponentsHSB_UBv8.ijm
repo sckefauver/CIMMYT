@@ -1,4 +1,4 @@
-//Macro to batch process apply hue (hsb/hsv) thresholding of vegetation components
+//Macro to batch process apply hue (HSB/HSV) thresholding of vegetation components
 
 input = "$P{batch_input}";
 saveHsb = $P{save_hsb_images};

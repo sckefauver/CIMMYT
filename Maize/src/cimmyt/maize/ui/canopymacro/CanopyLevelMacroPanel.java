@@ -24,19 +24,19 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.plaf.basic.BasicButtonUI;
-import javax.swing.text.DefaultHighlighter;
-import javax.swing.text.Highlighter.HighlightPainter;
 import layout.TableLayout;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
 import cimmyt.maize.ui.MaizeFrame;
 import cimmyt.maize.ui.tools.FileOpen;
+import cimmyt.maize.ui.tools.FileSave;
 
 /**
  * 
@@ -73,15 +73,10 @@ public class CanopyLevelMacroPanel extends JPanel {
         private File saveHsbDir = null;
         private File saveResultsFile = null;
         
-        private HashMap<String, MacroVars> macroMap = null;
-        
-        private static final HighlightPainter HP_CYAN = new DefaultHighlighter.DefaultHighlightPainter(Color.CYAN);
-        private static final HighlightPainter HP_PINK = new DefaultHighlighter.DefaultHighlightPainter(Color.PINK);
-        private static final HighlightPainter HP_ORANGE = new DefaultHighlighter.DefaultHighlightPainter(Color.ORANGE);
-        private static final HighlightPainter HP_GREEN = new DefaultHighlighter.DefaultHighlightPainter(Color.GREEN);
+        private HashMap<String, MaizeMacroVars> macroMap = null;
         
         public CanopyLevelMacroPanel() {
-                macroMap = new HashMap<String, MacroVars>(7);
+                macroMap = new HashMap<String, MaizeMacroVars>(7);
                 
                 batchInputLabel = new JLabel("Batch Inputs:");
                 batchInputLabel.setHorizontalAlignment(JLabel.RIGHT);
@@ -178,7 +173,6 @@ public class CanopyLevelMacroPanel extends JPanel {
                 runButton.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                                MaizeFrame.setMacroRunning(true);
                                 runButton_actionPerformed();
                         }
                 });
@@ -203,6 +197,11 @@ public class CanopyLevelMacroPanel extends JPanel {
         }
         
         private final void runButton_actionPerformed() {
+                if(MaizeFrame.isMacroRunning()) {
+                        JOptionPane.showMessageDialog(this, "A macro is already running, please wait until it finishes.", "Macro Already Running", JOptionPane.INFORMATION_MESSAGE);
+                        return;
+                }
+                
                 Thread macroThread = new Thread(new Runnable() {
                         @Override
                         public void run() {
@@ -212,6 +211,7 @@ public class CanopyLevelMacroPanel extends JPanel {
                                                 runButton.setEnabled(false);
                                                 progressBar.setIndeterminate(true);
                                                 progressBar.setString("Running Macro ...");
+                                                MaizeFrame.setMacroRunning(true);
                                         }
                                 });
                                 
@@ -241,8 +241,8 @@ public class CanopyLevelMacroPanel extends JPanel {
                         batchInputField.setText(batchInputDir.getAbsolutePath());
 
                         int index = macroTab.getSelectedIndex();
-                        MacroVars macroVar = macroMap.get("" + index);
-                        macroVar.setBatchInputVar(batchInputDir.getAbsolutePath(), HP_CYAN);
+                        MaizeMacroVars macroVar = macroMap.get("" + index);
+                        macroVar.setBatchInputVar(batchInputDir.getAbsolutePath());
                 }
         }
         
@@ -259,8 +259,8 @@ public class CanopyLevelMacroPanel extends JPanel {
                 }
                 
                 int index = macroTab.getSelectedIndex();
-                MacroVars macroVar = macroMap.get(""+index);
-                macroVar.setSaveHsbImagesVar(selection, HP_ORANGE);
+                MaizeMacroVars macroVar = macroMap.get(""+index);
+                macroVar.setSaveHsbImagesVar(selection);
         }
         
         private final void saveHsbImagesButton_actionPerformed() {
@@ -270,20 +270,26 @@ public class CanopyLevelMacroPanel extends JPanel {
                         saveHsbImagesField.setText(saveHsbDir.getAbsolutePath());
                         
                         int index = macroTab.getSelectedIndex();
-                        MacroVars macroVar = macroMap.get(""+index);
-                        macroVar.setSaveHsbDirVar(saveHsbDir.getAbsolutePath(), HP_PINK);
+                        MaizeMacroVars macroVar = macroMap.get(""+index);
+                        macroVar.setSaveHsbDirVar(saveHsbDir.getAbsolutePath());
                 }
         }
         
         private final void resultsFileButton_actionPerformed() {
-                saveResultsFile = FileOpen.getFile("Name Results File", (recentDir == null ? System.getProperty("user.dir") : recentDir), JFileChooser.FILES_AND_DIRECTORIES , "Results File (*.xls)", "xls");
+                saveResultsFile = FileSave.saveFile("Name Results File", (recentDir == null ? new File(System.getProperty("user.dir")) : new File(recentDir)), "Results File (*.xls)", "Results.xls");
                 if(saveResultsFile != null) {
                         recentDir = saveResultsFile.getParentFile().getAbsolutePath();
+                        
+                        if(!saveResultsFile.getName().endsWith(".xls")) {
+                                String tmp = saveResultsFile.getAbsolutePath();
+                                saveResultsFile = new File(tmp+".xls");
+                        }
+                        
                         resultsFileField.setText(saveResultsFile.getAbsolutePath());
                         
                         int index = macroTab.getSelectedIndex();
-                        MacroVars macroVar = macroMap.get(""+index);
-                        macroVar.setSaveResultsFile(saveResultsFile.getAbsolutePath(), HP_GREEN);
+                        MaizeMacroVars macroVar = macroMap.get(""+index);
+                        macroVar.setSaveResultsFile(saveResultsFile.getAbsolutePath());
                 }
         }
         
@@ -318,7 +324,7 @@ public class CanopyLevelMacroPanel extends JPanel {
                                 
                                 macroTab.setTabComponentAt(tabIndex, new CustomTabPanel(tabName));
                                 
-                                MacroVars macroVar = new MacroVars();
+                                MaizeMacroVars macroVar = new MaizeMacroVars();
                                 macroVar.setMacroNameKey(""+tabIndex);
                                 macroVar.setMacroName(tabName);
                                 macroVar.setSyntaxTextArea(syntaxTextArea);

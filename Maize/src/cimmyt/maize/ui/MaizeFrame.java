@@ -9,6 +9,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
 import cimmyt.maize.ui.breedpix.BreedPixPanel;
 import cimmyt.maize.ui.canopymacro.CanopyLevelMacroPanel;
+import cimmyt.maize.ui.canopymacro.NgrdiAndTgiMacroPanel;
 import cimmyt.maize.ui.scanner.ScannerPanel;
 import cimmyt.maize.ui.tools.UITool;
 
@@ -25,7 +26,9 @@ public class MaizeFrame extends JFrame {
         
         private JTabbedPane tabbedPane = null;
         private ScannerPanel scannerPanel = null;
+        private JTabbedPane macroTabbedPane = null;
         private CanopyLevelMacroPanel canopyMacroPanel = null;
+        private NgrdiAndTgiMacroPanel ngrdiAndTgiMacroPanel = null;
         private BreedPixPanel breedPixPanel = null;
 
         private static boolean scannerRunning = false;
@@ -39,11 +42,16 @@ public class MaizeFrame extends JFrame {
         private final void init() {
                 scannerPanel = new ScannerPanel();
                 canopyMacroPanel = new CanopyLevelMacroPanel();
+                ngrdiAndTgiMacroPanel = new NgrdiAndTgiMacroPanel();
                 breedPixPanel = new BreedPixPanel();
+                
+                macroTabbedPane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);
+                macroTabbedPane.add("Maize", canopyMacroPanel);
+                macroTabbedPane.add("NGRDI and TGI", ngrdiAndTgiMacroPanel);
                 
                 tabbedPane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);
                 tabbedPane.addTab("Scanner", scannerPanel);
-                tabbedPane.addTab("Canopy Macros", canopyMacroPanel);
+                tabbedPane.addTab("Canopy Macros", macroTabbedPane);
                 tabbedPane.addTab("BreedPix", breedPixPanel);
                 
                 // ---------------------------------------------------
