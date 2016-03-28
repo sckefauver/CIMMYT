@@ -15,13 +15,15 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.event.EventListenerList;
-import layout.TableLayout;
+import javax.swing.text.AbstractDocument;
 import cimmyt.maize.options.AnalysisOption;
 import cimmyt.maize.options.ParticleAnalysisOptions;
 import cimmyt.maize.ui.events.Events;
-import cimmyt.maize.ui.tools.JCustomTextField;
+import cimmyt.maize.ui.tools.RegexDocumentFilter;
 import cimmyt.maize.ui.tools.UITool;
+import layout.TableLayout;
 
 /**
  * 
@@ -39,14 +41,14 @@ public class ParticleAnalyzerOptionsPanel extends JPanel implements ActionListen
         private int eventId = 0;
         
         private JLabel sizeLabel = null;
-        private JCustomTextField sizeFromField = null;
+        private JTextField sizeFromField = null;
         private JLabel sizeToLabel = null;
-        private JCustomTextField sizeToField = null;
+        private JTextField sizeToField = null;
         private JCheckBox infinityCheckBox = null;
         private JLabel circLabel = null;
-        private JCustomTextField circFromField = null;
+        private JTextField circFromField = null;
         private JLabel circToLabel = null;
-        private JCustomTextField circToField = null;
+        private JTextField circToField = null;
         
         private JButton addButton = null;
         private JButton delButton = null;
@@ -62,17 +64,17 @@ public class ParticleAnalyzerOptionsPanel extends JPanel implements ActionListen
                 sizeLabel = new JLabel("Size:");
                 sizeLabel.setHorizontalAlignment(JLabel.RIGHT);
                 
-                sizeFromField = new JCustomTextField(8, 10);
-                sizeFromField.setRegexFilter("\\d");
+                sizeFromField = new JTextField(8);
                 sizeFromField.setText("0");
+                ((AbstractDocument) sizeFromField.getDocument()).setDocumentFilter(new RegexDocumentFilter("\\d", 10));
                 
                 sizeToLabel = new JLabel("to");
                 sizeToLabel.setHorizontalAlignment(JLabel.CENTER);
                 
-                //TODO max size cannot go over 999999 as per FIJI restrictions
+                //Note: max size cannot go over 999999 as per FIJI restrictions
                 //Fiji will detect 999999 and assign positive infinity instead
-                sizeToField = new JCustomTextField(8, 10);
-                sizeToField.setRegexFilter("\\d");
+                sizeToField = new JTextField(8);
+                ((AbstractDocument) sizeToField.getDocument()).setDocumentFilter(new RegexDocumentFilter("\\d", 10));
                 
                 infinityCheckBox = new JCheckBox("Infinity", true);
                 infinityCheckBox.addActionListener(new ActionListener() {
@@ -89,9 +91,9 @@ public class ParticleAnalyzerOptionsPanel extends JPanel implements ActionListen
                 circLabel = new JLabel("Circularity:");
                 circLabel.setHorizontalAlignment(JLabel.RIGHT);
                 
-                circFromField = new JCustomTextField(5, 10);
+                circFromField = new JTextField(5);
                 circFromField.setText("0.0");
-                circFromField.setRegexFilter("\\d|\\.");
+                ((AbstractDocument) circFromField.getDocument()).setDocumentFilter(new RegexDocumentFilter("\\d|\\.", 10));
                 circFromField.addFocusListener(new FocusAdapter() {
                         @Override
                         public void focusLost(FocusEvent e) {
@@ -102,9 +104,9 @@ public class ParticleAnalyzerOptionsPanel extends JPanel implements ActionListen
                 circToLabel = new JLabel("to");
                 circToLabel.setHorizontalAlignment(JLabel.CENTER);
                 
-                circToField = new JCustomTextField(5, 10);
+                circToField = new JTextField(5);
                 circToField.setText("1.0");
-                circToField.setRegexFilter("\\d|\\.");
+                ((AbstractDocument) circToField.getDocument()).setDocumentFilter(new RegexDocumentFilter("\\d|\\.", 10));
                 circToField.addFocusListener(new FocusAdapter() {
                         @Override
                         public void focusLost(FocusEvent e) {
@@ -179,20 +181,22 @@ public class ParticleAnalyzerOptionsPanel extends JPanel implements ActionListen
         
         private final void infinityCheckBox_actionPerformed() {
                 if(infinityCheckBox.isSelected()) {
-                        sizeToField.setRegexFilter("Infinity");
+                        RegexDocumentFilter regexDocFilter = (RegexDocumentFilter)((AbstractDocument) sizeToField.getDocument()).getDocumentFilter();
+                        regexDocFilter.setRegex("Infinity");
                         sizeToField.setText("Infinity");
                         sizeToField.setEditable(false);
                         sizeToField.setBackground(Color.WHITE);
                 }
                 else {
-                        sizeToField.setRegexFilter("\\d{1,10}");
+                        RegexDocumentFilter regexDocFilter = (RegexDocumentFilter)((AbstractDocument) sizeToField.getDocument()).getDocumentFilter();
+                        regexDocFilter.setRegex("\\d{1,10}");
                         sizeToField.setText("");
                         sizeToField.setEditable(true);
                 }
         }
         
         private final void validateDecimal_focusLost(FocusEvent e) {
-                JCustomTextField source = (JCustomTextField)e.getSource();
+                JTextField source = (JTextField)e.getSource();
                 String text = source.getText();
                 
                 if(!DECIMAL_PATTERN.matcher(text).matches()) {
