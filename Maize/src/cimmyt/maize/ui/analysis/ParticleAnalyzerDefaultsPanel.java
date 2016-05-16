@@ -106,7 +106,6 @@ public class ParticleAnalyzerDefaultsPanel extends JPanel {
                 
                 double spacer = 5;
                 double[][] layoutSize = {
-                                //                   0
                                 {TableLayout.FILL},
                                 {TableLayout.PREFERRED, //0
                                  spacer,

@@ -261,86 +261,83 @@ public class BreedPixPanel extends JPanel {
                         fileName = imageFile.getName();
                         ext = fileName.substring(fileName.lastIndexOf('.')+1).toLowerCase();
                         
-//                        When Fiji Uses Java 7 by default we will use the switch statement
-//                        
-//                        switch(ext) {
-//                                case "jpg":
-//                                case "jpeg":
-//                                case "png":
-//                                case "tif":
-//                                case "tiff":
-//                        }
-                        
-                        if(ext.equals("jpg") || ext.equals("jpeg") || ext.equals("png") || ext.equals("tif") || ext.equals("tiff")) {
-                                fileName = fileName.substring(0, fileName.lastIndexOf('.'));
-                                
-                                BufferedImage image = openImage(imageFile);
-                                BufferedImage scaledRenderedImage = reduceToMaxSize(image, 1024*768);
-                                BreedPixResult result = picViOperation.execute(scaledRenderedImage);
-                                
-                                if( result != null) {
-                                        if(saveGaImageCheckBox.isSelected()) {
-                                                PixelMask gaRoi = result.getGa_roi();
-                                                BufferedImage gaRoiImage = paintBWNotROI(scaledRenderedImage, gaRoi, fileName);
+                        switch(ext) {
+                                case "jpg":
+                                case "jpeg":
+                                case "png":
+                                case "tif":
+                                case "tiff": {
+                                        fileName = fileName.substring(0, fileName.lastIndexOf('.'));
+                                        
+                                        BufferedImage image = openImage(imageFile);
+                                        BufferedImage scaledRenderedImage = reduceToMaxSize(image, 1024*768);
+                                        BreedPixResult result = picViOperation.execute(scaledRenderedImage);
+                                        
+                                        if( result != null) {
+                                                if(saveGaImageCheckBox.isSelected()) {
+                                                        PixelMask gaRoi = result.getGa_roi();
+                                                        BufferedImage gaRoiImage = paintBWNotROI(scaledRenderedImage, gaRoi, fileName);
+                                                        
+                                                        try {
+                                                                ImageIO.write(gaRoiImage, "jpg", new File(imagePath+File.separator+fileName+"_GA.JPG"));
+                                                        }
+                                                        catch(IOException ioe) {
+                                                                IJ.log("Error saving GA ROI image: " + fileName);
+                                                                IJ.log("Error: "+ioe.getMessage());
+                                                        }
+                                                        finally {
+                                                                gaRoi = null;
+                                                                gaRoiImage = null;
+                                                        }
+                                                }
                                                 
-                                                try {
-                                                        ImageIO.write(gaRoiImage, "jpg", new File(imagePath+File.separator+fileName+"_GA.JPG"));
+                                                if(saveGgaImageCheckBox.isSelected()) {
+                                                        PixelMask ggaRoi = result.getGga_roi();
+                                                        BufferedImage ggaRoiImage = paintBWNotROI(scaledRenderedImage, ggaRoi, fileName);
+                                                        
+                                                        try {
+                                                                ImageIO.write(ggaRoiImage, "jpg", new File(imagePath+File.separator+fileName+"_GGA.JPG"));
+                                                        }
+                                                        catch(IOException ioe) {
+                                                                IJ.log("Error saving GGA ROI image: " + fileName);
+                                                                IJ.log("Error: "+ioe.getMessage());
+                                                        }
+                                                        finally {
+                                                                ggaRoi = null;
+                                                                ggaRoiImage = null;
+                                                        }
                                                 }
-                                                catch(IOException ioe) {
-                                                        IJ.log("Error saving GA ROI image: " + fileName);
-                                                        IJ.log("Error: "+ioe.getMessage());
-                                                }
-                                                finally {
-                                                        gaRoi = null;
-                                                        gaRoiImage = null;
-                                                }
+                                                
+                                                resultBuilder.append(fileName).append('.').append(ext);
+                                                resultBuilder.append(',');
+                                                resultBuilder.append(result.getIhs_i());
+                                                resultBuilder.append(',');
+                                                resultBuilder.append(result.getIhs_h());
+                                                resultBuilder.append(',');
+                                                resultBuilder.append(result.getIhs_s());
+                                                resultBuilder.append(',');
+                                                resultBuilder.append(result.getLab_l());
+                                                resultBuilder.append(',');
+                                                resultBuilder.append(result.getLab_a());
+                                                resultBuilder.append(',');
+                                                resultBuilder.append(result.getLab_b());
+                                                resultBuilder.append(',');
+                                                resultBuilder.append(result.getLuv_u());
+                                                resultBuilder.append(',');
+                                                resultBuilder.append(result.getLuv_v());
+                                                resultBuilder.append(',');
+                                                resultBuilder.append(result.getGa());
+                                                resultBuilder.append(',');
+                                                resultBuilder.append(result.getGga());
+                                                resultBuilder.append(System.getProperty("line.separator"));
                                         }
                                         
-                                        if(saveGgaImageCheckBox.isSelected()) {
-                                                PixelMask ggaRoi = result.getGga_roi();
-                                                BufferedImage ggaRoiImage = paintBWNotROI(scaledRenderedImage, ggaRoi, fileName);
-                                                
-                                                try {
-                                                        ImageIO.write(ggaRoiImage, "jpg", new File(imagePath+File.separator+fileName+"_GGA.JPG"));
-                                                }
-                                                catch(IOException ioe) {
-                                                        IJ.log("Error saving GGA ROI image: " + fileName);
-                                                        IJ.log("Error: "+ioe.getMessage());
-                                                }
-                                                finally {
-                                                        ggaRoi = null;
-                                                        ggaRoiImage = null;
-                                                }
-                                        }
-                                        
-                                        resultBuilder.append(fileName).append('.').append(ext);
-                                        resultBuilder.append(',');
-                                        resultBuilder.append(result.getIhs_i());
-                                        resultBuilder.append(',');
-                                        resultBuilder.append(result.getIhs_h());
-                                        resultBuilder.append(',');
-                                        resultBuilder.append(result.getIhs_s());
-                                        resultBuilder.append(',');
-                                        resultBuilder.append(result.getLab_l());
-                                        resultBuilder.append(',');
-                                        resultBuilder.append(result.getLab_a());
-                                        resultBuilder.append(',');
-                                        resultBuilder.append(result.getLab_b());
-                                        resultBuilder.append(',');
-                                        resultBuilder.append(result.getLuv_u());
-                                        resultBuilder.append(',');
-                                        resultBuilder.append(result.getLuv_v());
-                                        resultBuilder.append(',');
-                                        resultBuilder.append(result.getGa());
-                                        resultBuilder.append(',');
-                                        resultBuilder.append(result.getGga());
-                                        resultBuilder.append(System.getProperty("line.separator"));
+                                        scaledRenderedImage = null;
+                                        image = null;
+                                        fileName = null;
+                                        imageFile = null;
+                                        break;
                                 }
-                                
-                                scaledRenderedImage = null;
-                                image = null;
-                                fileName = null;
-                                imageFile = null;
                         }
                 }
                 
@@ -365,7 +362,7 @@ public class BreedPixPanel extends JPanel {
         private final BufferedImage openImage(File imageFile) {
                 BufferedImage image = null;
                 try {
-                        image = ImageIO.read(imageFile);
+                        image = IJ.openImage(imageFile.getAbsolutePath()).getBufferedImage();
                 }
                 catch(Exception ex) {
                         IJ.log("Error opening image: " + imageFile.getName());
