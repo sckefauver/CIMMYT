@@ -1,4 +1,6 @@
-package cimmyt.maize.ui.canopymacro;
+package cimmyt.maize.ui.macros.ngrditgi;
+
+import cimmyt.maize.ui.macros.MacroVars;
 
 /**
  * 

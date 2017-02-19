@@ -1,4 +1,4 @@
-package cimmyt.maize.ui.canopymacro;
+package cimmyt.maize.ui.macros.ngrditgi;
 
 import ij.IJ;
 import java.awt.BorderLayout;
@@ -30,6 +30,7 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
 import cimmyt.maize.ui.MaizeFrame;
+import cimmyt.maize.ui.macros.canopy.CanopyLevelMacroPanel;
 import cimmyt.maize.ui.tools.FileOpen;
 import cimmyt.maize.ui.tools.FileSave;
 
@@ -286,7 +287,7 @@ public class NgrdiAndTgiMacroPanel extends JPanel {
         }
         
         private final RTextScrollPane createMacroPanel(String panelName, String macroTemplateName) {
-                InputStream macroInputStream = CanopyLevelMacroPanel.class.getResourceAsStream("/cimmyt/maize/ui/canopymacro/Wheat_RGB_VegetationIndexes_v1.ijm");
+                InputStream macroInputStream = CanopyLevelMacroPanel.class.getResourceAsStream("/cimmyt/maize/ui/macros/ngrditgi/Wheat_RGB_VegetationIndexes_v1.ijm");
                 RTextScrollPane syntaxScrollPane = null;
                 if(macroInputStream != null) {
                         RSyntaxTextArea syntaxTextArea = new RSyntaxTextArea(20, 60);

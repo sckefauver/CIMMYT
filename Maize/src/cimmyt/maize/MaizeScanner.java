@@ -17,13 +17,14 @@ import cimmyt.maize.ui.tools.UITool;
  *
  */
 public class MaizeScanner implements PlugIn {
-
+        
+        public static final String VERSION = "0.13";
         private MaizeFrame frame = null;
         
         @Override
         public void run(String arg) {
-                if (IJ.versionLessThan("1.49m")) {
-                        IJ.showMessage("This plugin needs to run on ImageJ v1.49m and above");
+                if (IJ.versionLessThan("1.51g")) {
+                        IJ.showMessage("This plugin needs to run on ImageJ v1.51g and above");
                 }
                 else {
                         try {

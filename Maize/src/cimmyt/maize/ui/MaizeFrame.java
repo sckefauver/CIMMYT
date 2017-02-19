@@ -7,9 +7,10 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
+import cimmyt.maize.MaizeScanner;
 import cimmyt.maize.ui.breedpix.BreedPixPanel;
-import cimmyt.maize.ui.canopymacro.CanopyLevelMacroPanel;
-import cimmyt.maize.ui.canopymacro.NgrdiAndTgiMacroPanel;
+import cimmyt.maize.ui.macros.canopy.CanopyLevelMacroPanel;
+import cimmyt.maize.ui.macros.ngrditgi.NgrdiAndTgiMacroPanel;
 import cimmyt.maize.ui.scanner.ScannerPanel;
 import cimmyt.maize.ui.tools.UITool;
 
@@ -57,7 +58,7 @@ public class MaizeFrame extends JFrame {
                 // ---------------------------------------------------
                 
                 setSize(570, 600);
-                setTitle("CIMMYT Maize Scanner");
+                setTitle("CIMMYT Maize Scanner- "+MaizeScanner.VERSION);
                 setLayout(new BorderLayout(5, 5));
                 add(tabbedPane, BorderLayout.CENTER);
                 

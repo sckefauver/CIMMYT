@@ -1,4 +1,4 @@
-package cimmyt.maize.ui.canopymacro;
+package cimmyt.maize.ui.macros;
 
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 
