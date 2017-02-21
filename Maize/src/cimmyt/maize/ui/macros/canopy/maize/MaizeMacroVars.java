@@ -1,4 +1,4 @@
-package cimmyt.maize.ui.macros.canopy;
+package cimmyt.maize.ui.macros.canopy.maize;
 
 import cimmyt.maize.ui.macros.MacroVars;
 

@@ -9,8 +9,9 @@ import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
 import cimmyt.maize.MaizeScanner;
 import cimmyt.maize.ui.breedpix.BreedPixPanel;
-import cimmyt.maize.ui.macros.canopy.CanopyLevelMacroPanel;
-import cimmyt.maize.ui.macros.ngrditgi.NgrdiAndTgiMacroPanel;
+import cimmyt.maize.ui.macros.canopy.maize.MaizeMacroPanel;
+import cimmyt.maize.ui.macros.canopy.ngrditgi.NgrdiAndTgiMacroPanel;
+import cimmyt.maize.ui.macros.leaf.maizescans.MaizeScansMacroPanel;
 import cimmyt.maize.ui.scanner.ScannerPanel;
 import cimmyt.maize.ui.tools.UITool;
 
@@ -28,8 +29,9 @@ public class MaizeFrame extends JFrame {
         private JTabbedPane tabbedPane = null;
         private ScannerPanel scannerPanel = null;
         private JTabbedPane macroTabbedPane = null;
-        private CanopyLevelMacroPanel canopyMacroPanel = null;
+        private MaizeMacroPanel maizeMacroPanel = null;
         private NgrdiAndTgiMacroPanel ngrdiAndTgiMacroPanel = null;
+        private MaizeScansMacroPanel maizeScansMacroPanel = null;
         private BreedPixPanel breedPixPanel = null;
 
         private static boolean scannerRunning = false;
@@ -42,13 +44,15 @@ public class MaizeFrame extends JFrame {
 
         private final void init() {
                 scannerPanel = new ScannerPanel();
-                canopyMacroPanel = new CanopyLevelMacroPanel();
+                maizeMacroPanel = new MaizeMacroPanel();
                 ngrdiAndTgiMacroPanel = new NgrdiAndTgiMacroPanel();
+                maizeScansMacroPanel = new MaizeScansMacroPanel();
                 breedPixPanel = new BreedPixPanel();
                 
                 macroTabbedPane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);
-                macroTabbedPane.add("Maize", canopyMacroPanel);
+                macroTabbedPane.add("Maize", maizeMacroPanel);
                 macroTabbedPane.add("NGRDI and TGI", ngrdiAndTgiMacroPanel);
+                macroTabbedPane.add("Maize Scans", maizeScansMacroPanel);
                 
                 tabbedPane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);
                 tabbedPane.addTab("Scanner", scannerPanel);
@@ -57,7 +61,7 @@ public class MaizeFrame extends JFrame {
                 
                 // ---------------------------------------------------
                 
-                setSize(570, 600);
+                setSize(800, 800);
                 setTitle("CIMMYT Maize Scanner- "+MaizeScanner.VERSION);
                 setLayout(new BorderLayout(5, 5));
                 add(tabbedPane, BorderLayout.CENTER);
