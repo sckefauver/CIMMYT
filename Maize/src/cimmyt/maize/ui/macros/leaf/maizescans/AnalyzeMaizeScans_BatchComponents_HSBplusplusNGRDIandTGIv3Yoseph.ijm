@@ -1,6 +1,6 @@
 //Macro to batch process apply hue (hsb/hsv) thresholding of vegetation components 
 //Components include scanner bed, greenveg, chlorosis, necrosis
-	
+
 run("Input/Output...", "jpeg=85 gif=-1 file=.csv use_file copy_column copy_row save_column save_row");
 
 var input = "$P{batch_input}";
@@ -538,4 +538,4 @@ function isImage(filename) {
     else {
         return false
     }
-};
+}

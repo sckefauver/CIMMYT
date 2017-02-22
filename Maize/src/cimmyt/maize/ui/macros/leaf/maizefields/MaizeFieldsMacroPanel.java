@@ -1,4 +1,4 @@
-package cimmyt.maize.ui.macros.leaf.maizescans;
+package cimmyt.maize.ui.macros.leaf.maizefields;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -34,9 +34,9 @@ import layout.TableLayout;
  * 
  * @author George - george.dma@gmail.com
  * <br>
- * Created on: Feb 21, 2017
+ * Created on: Feb 23, 2017
  */
-public class MaizeScansMacroPanel extends JPanel {
+public class MaizeFieldsMacroPanel extends JPanel {
         
         private static final long serialVersionUID = -2774662326855220700L;
         
@@ -52,7 +52,7 @@ public class MaizeScansMacroPanel extends JPanel {
         private JTextField resultsFileField = null;
         private JButton resultsFileButton = null;
         
-        private JCheckBox saveScannerImagesCheckBox = null;
+        private JCheckBox saveSoilImagesCheckBox = null;
         private JCheckBox saveGreenVegImagesCheckBox = null;
         private JCheckBox saveGreenerVegImagesCheckBox = null;
         private JCheckBox saveChlorosisImagesCheckBox = null;
@@ -73,10 +73,10 @@ public class MaizeScansMacroPanel extends JPanel {
         private File batchOutputDir = null;
         private File saveResultsFile = null;
         
-        private MaizeScansMacroVars macroVars = null;
+        private MaizeFieldsMacroVars macroVars = null;
         
-        public MaizeScansMacroPanel() {
-                macroVars = new MaizeScansMacroVars();
+        public MaizeFieldsMacroPanel() {
+                macroVars = new MaizeFieldsMacroVars();
                 
                 batchInputLabel = new JLabel("Batch Inputs:");
                 batchInputLabel.setHorizontalAlignment(JLabel.RIGHT);
@@ -132,13 +132,13 @@ public class MaizeScansMacroPanel extends JPanel {
                         }
                 });
                 
-                saveScannerImagesCheckBox = new JCheckBox("Scanner", false);
-                saveScannerImagesCheckBox.setFocusable(false);
-                saveScannerImagesCheckBox.setSelected(false);
-                saveScannerImagesCheckBox.addActionListener(new ActionListener() {
+                saveSoilImagesCheckBox = new JCheckBox("Soil", false);
+                saveSoilImagesCheckBox.setFocusable(false);
+                saveSoilImagesCheckBox.setSelected(false);
+                saveSoilImagesCheckBox.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                                saveScannerImagesCheckBox_actionPerformed();
+                                saveSoilImagesCheckBox_actionPerformed();
                         }
                 });
                 
@@ -186,7 +186,7 @@ public class MaizeScansMacroPanel extends JPanel {
                 checkBoxLabel.setHorizontalAlignment(JLabel.RIGHT);
                 
                 checkBoxPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 4));
-                checkBoxPanel.add(saveScannerImagesCheckBox);
+                checkBoxPanel.add(saveSoilImagesCheckBox);
                 checkBoxPanel.add(saveNgrdiImagesCheckBox);
                 checkBoxPanel.add(saveTgiImagesCheckBox);
                 checkBoxPanel.add(saveGreenVegImagesCheckBox);
@@ -266,7 +266,7 @@ public class MaizeScansMacroPanel extends JPanel {
                 
                 // ---------------------------------------------------
                 
-                RTextScrollPane textScrollPane = createMacroPanel("Maize MLN Scans", "AnalyzeMaizeScans_BatchComponents_HSBplusplusNGRDIandTGIv3Yoseph.ijm");
+                RTextScrollPane textScrollPane = createMacroPanel("Maize MLN Fields", "AnalyzeMaizeFieldPhotos_BatchComponents_HSBplusNGRDIandTGIv3Bish.ijm");
                 
                 setLayout(new BorderLayout(5, 5));
                 setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -300,7 +300,7 @@ public class MaizeScansMacroPanel extends JPanel {
                 saveChlorosisImagesCheckBox_actionPerformed();
                 saveGreenerVegImagesCheckBox_actionPerformed();
                 saveGreenVegImagesCheckBox_actionPerformed();
-                saveScannerImagesCheckBox_actionPerformed();
+                saveSoilImagesCheckBox_actionPerformed();
                 saveTgiImagesCheckBox_actionPerformed();
                 saveNgrdiImagesCheckBox_actionPerformed();
                 
@@ -336,7 +336,7 @@ public class MaizeScansMacroPanel extends JPanel {
         }
         
         private final RTextScrollPane createMacroPanel(String panelName, String macroTemplateName) {
-                InputStream macroInputStream = MaizeMacroPanel.class.getResourceAsStream("/cimmyt/maize/ui/macros/leaf/maizescans/AnalyzeMaizeScans_BatchComponents_HSBplusplusNGRDIandTGIv3Yoseph.ijm");
+                InputStream macroInputStream = MaizeMacroPanel.class.getResourceAsStream("/cimmyt/maize/ui/macros/leaf/maizefields/AnalyzeMaizeFieldPhotos_BatchComponents_HSBplusNGRDIandTGIv3Bish.ijm");
                 RTextScrollPane syntaxScrollPane = null;
                 if(macroInputStream != null) {
                         RSyntaxTextArea syntaxTextArea = new RSyntaxTextArea(20, 60);
@@ -432,16 +432,16 @@ public class MaizeScansMacroPanel extends JPanel {
                 macroVars.setSaveTgiVar(selection);
         }
         
-        private final void saveScannerImagesCheckBox_actionPerformed() {
+        private final void saveSoilImagesCheckBox_actionPerformed() {
                 String selection = null;
-                if(saveScannerImagesCheckBox.isSelected()) {
+                if(saveSoilImagesCheckBox.isSelected()) {
                         selection = "true";
                 }
                 else {
                         selection = "false";
                 }
                 
-                macroVars.setSaveScannerVar(selection);
+                macroVars.setSaveSoilVar(selection);
         }
         
         private final void saveGreenVegImagesCheckBox_actionPerformed() {
@@ -493,7 +493,7 @@ public class MaizeScansMacroPanel extends JPanel {
         }
         
         private final void resultsFileButton_actionPerformed() {
-                saveResultsFile = FileSave.saveFile("Name Results File", (recentDir == null ? new File(System.getProperty("user.dir")) : new File(recentDir)), "Results File (*.csv)", "MaizeLeafScans-GA-GGA-Chlorosis-Necrosis-HSB-CIELAB-NGRDI-TGI-LeafMLN-ResultsV3.csv");
+                saveResultsFile = FileSave.saveFile("Name Results File", (recentDir == null ? new File(System.getProperty("user.dir")) : new File(recentDir)), "Results File (*.csv)", "MaizePlotPhotos-Soil-GA-GGA-Chlorosis-Necrosis-HSB-CIELAB-NGRDI-TGI-PlotMLN-ResultsV3.csv");
                 if(saveResultsFile != null) {
                         recentDir = saveResultsFile.getParentFile().getAbsolutePath();
                         
