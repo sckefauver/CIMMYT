@@ -7,8 +7,6 @@ import java.awt.Rectangle;
 
 
 /**
- * <p>Modified by George El-Haddad (george.dma@gmail.com)</p>
- * 
  * @version 1.0;  23 Dec 2004
  * @author Dimiter Prodanov
  * @author University of Leiden
@@ -30,6 +28,10 @@ import java.awt.Rectangle;
  *      You should have received a copy of the GNU Lesser General Public
  *      License along with this library; if not, write to the Free Software
  *      Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * 
+ * @author George El Haddad (george.dma@gmail.com)
+ * <p>
+ * Minor modifications to work with the maize scanner.
  */
 public class RGB_Measure_Plus {
 

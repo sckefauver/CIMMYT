@@ -12,8 +12,8 @@ import org.junit.Test;
 
 /**
  * 
- * @author George - george.dma@gmail.com
- * <br>
+ * @author George El Haddad (george.dma@gmail.com)
+ * <p>
  * Created on: Aug 15, 2015
  * <p>
  * This test class is still not final.

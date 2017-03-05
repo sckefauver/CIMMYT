@@ -11,19 +11,20 @@ import cimmyt.maize.ui.tools.UITool;
 
 /**
  * 
- * @author George - george.dma@gmail.com
- * <br>
+ * @author George El Haddad (george.dma@gmail.com)
+ * <p>
  * Created on: Mar 12, 2015
  *
  */
 public class MaizeScanner implements PlugIn {
-
+        
+        public static final String VERSION = "1.13";
         private MaizeFrame frame = null;
         
         @Override
         public void run(String arg) {
-                if (IJ.versionLessThan("1.49m")) {
-                        IJ.showMessage("This plugin needs to run on ImageJ v1.49m and above");
+                if (IJ.versionLessThan("1.51g")) {
+                        IJ.showMessage("This plugin needs to run on ImageJ v1.51g and above");
                 }
                 else {
                         try {

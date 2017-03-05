@@ -7,8 +7,8 @@ import javax.swing.text.DocumentFilter;
 
 /**
  * 
- * @author George - george.dma@gmail.com
- * <br>
+ * @author George El Haddad (george.dma@gmail.com)
+ * <p>
  * Created on: Dec 16, 2015
  *
  */

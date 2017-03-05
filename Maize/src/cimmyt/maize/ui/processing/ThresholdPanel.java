@@ -13,8 +13,8 @@ import cimmyt.maize.options.ThresholdOptions;
 
 /**
  * 
- * @author George - george.dma@gmail.com
- * <br>
+ * @author George El Haddad (george.dma@gmail.com)
+ * <p>
  * Created on: Mar 20, 2015
  *
  */

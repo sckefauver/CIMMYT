@@ -1,9 +1,11 @@
-package cimmyt.maize.ui.canopymacro;
+package cimmyt.maize.ui.macros.canopy.ngrditgi;
+
+import cimmyt.maize.ui.macros.MacroVars;
 
 /**
  * 
- * @author George - george.dma@gmail.com
- * <br>
+ * @author George El Haddad (george.dma@gmail.com)
+ * <p>
  * Created on: Nov 4, 2015
  *
  */

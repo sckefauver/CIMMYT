@@ -1,4 +1,4 @@
-package cimmyt.maize.ui.canopymacro;
+package cimmyt.maize.ui.macros.canopy.maize;
 
 import ij.IJ;
 import java.awt.BorderLayout;
@@ -37,17 +37,18 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
 import cimmyt.maize.ui.MaizeFrame;
+import cimmyt.maize.ui.macros.MacroVars;
 import cimmyt.maize.ui.tools.FileOpen;
 import cimmyt.maize.ui.tools.FileSave;
 
 /**
  * 
- * @author George - george.dma@gmail.com
- * <br>
+ * @author George El Haddad (george.dma@gmail.com)
+ * <p>
  * Created on: May 26, 2015
  *
  */
-public class CanopyLevelMacroPanel extends JPanel {
+public class MaizeMacroPanel extends JPanel {
 
         private static final long serialVersionUID = -9141490313177003568L;
         
@@ -78,7 +79,7 @@ public class CanopyLevelMacroPanel extends JPanel {
         
         private HashMap<String, MaizeMacroVars> macroMap = null;
         
-        public CanopyLevelMacroPanel() {
+        public MaizeMacroPanel() {
                 macroMap = new HashMap<String, MaizeMacroVars>(7);
                 
                 batchInputLabel = new JLabel("Batch Inputs:");
@@ -170,9 +171,9 @@ public class CanopyLevelMacroPanel extends JPanel {
                 optionsPanel.add(batchInputLabel,      "0, 0");
                 optionsPanel.add(batchInputField,      "2, 0");
                 optionsPanel.add(batchInputButton,     "4, 0");
-                optionsPanel.add(saveImagesCheckBox,"0, 2");
-                optionsPanel.add(saveImagesField,   "2, 2");
-                optionsPanel.add(saveImagesButton,  "4, 2");
+                optionsPanel.add(saveImagesCheckBox,   "0, 2");
+                optionsPanel.add(saveImagesField,      "2, 2");
+                optionsPanel.add(saveImagesButton,     "4, 2");
                 optionsPanel.add(resultsFileLabel,     "0, 4");
                 optionsPanel.add(resultsFileField,     "2, 4");
                 optionsPanel.add(resultsFileButton,    "4, 4");
@@ -325,7 +326,7 @@ public class CanopyLevelMacroPanel extends JPanel {
         }
         
         private final void addMacroPanelTab(String tabName, String macroTemplateName, boolean editable) {
-                InputStream macroInputStream = CanopyLevelMacroPanel.class.getResourceAsStream("/cimmyt/maize/ui/canopymacro/"+macroTemplateName);
+                InputStream macroInputStream = MaizeMacroPanel.class.getResourceAsStream("/cimmyt/maize/ui/macros/canopy/maize/"+macroTemplateName);
                 if(macroInputStream != null) {
                         RSyntaxTextArea syntaxTextArea = new RSyntaxTextArea(20, 60);
                         syntaxTextArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);

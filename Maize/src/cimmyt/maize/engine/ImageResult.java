@@ -2,8 +2,8 @@ package cimmyt.maize.engine;
 
 /**
  * 
- * @author George - george.dma@gmail.com
- * <br>
+ * @author George El Haddad (george.dma@gmail.com)
+ * <p>
  * Created on: May 6, 2015
  *
  */
