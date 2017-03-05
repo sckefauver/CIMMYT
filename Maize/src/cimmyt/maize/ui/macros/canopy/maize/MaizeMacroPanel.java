@@ -32,6 +32,7 @@ import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicButtonUI;
+import javax.swing.text.BadLocationException;
 import layout.TableLayout;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
@@ -142,7 +143,7 @@ public class MaizeMacroPanel extends JPanel {
                 //----------------------------------------------------------------
                 
                 macroTab = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);
-                addMacroPanelTab("Default", "Maize_CIMMYT_QuanitfyImageComponentsHSB_UBv8.ijm", false);
+                addMacroPanelTab("Default", "Maize_CIMMYT_QuanitfyImageComponentsHSB_UBv8.ijm", false, false);
                 
                 macroTab.addChangeListener(new ChangeListener() {
                         @Override
@@ -325,7 +326,7 @@ public class MaizeMacroPanel extends JPanel {
                 }
         }
         
-        private final void addMacroPanelTab(String tabName, String macroTemplateName, boolean editable) {
+        private final void addMacroPanelTab(String tabName, String macroTemplateName, boolean editable, boolean isTemplate) {
                 InputStream macroInputStream = MaizeMacroPanel.class.getResourceAsStream("/cimmyt/maize/ui/macros/canopy/maize/"+macroTemplateName);
                 if(macroInputStream != null) {
                         RSyntaxTextArea syntaxTextArea = new RSyntaxTextArea(20, 60);
@@ -362,7 +363,22 @@ public class MaizeMacroPanel extends JPanel {
                                 macroVar.setSyntaxTextArea(syntaxTextArea);
                                 macroMap.put(""+tabIndex, macroVar);
                                 
-                                syntaxTextArea.setCaretPosition(0);
+                                int carPos = 0;
+                                if(isTemplate) {
+                                        try {
+                                                syntaxTextArea.addLineHighlight(33, Color.GREEN);
+                                                syntaxTextArea.addLineHighlight(34, Color.GREEN);
+                                                syntaxTextArea.addLineHighlight(35, Color.GREEN);
+                                        }
+                                        catch(BadLocationException e) {
+                                                e.printStackTrace();
+                                        }
+                                        
+                                        carPos = syntaxTextArea.getText().indexOf("Add your own vegetation index calculator here");
+                                        carPos+=100;
+                                }
+                                
+                                syntaxTextArea.setCaretPosition(carPos);
                         }
                         catch(IOException ioe) {
                                 ioe.printStackTrace();
@@ -432,7 +448,7 @@ public class MaizeMacroPanel extends JPanel {
                         addButton.addActionListener(new ActionListener() {
                                 @Override
                                 public void actionPerformed(ActionEvent e) {
-                                        addMacroPanelTab("Veg Index "+vegTabIndex, "Maize_CIMMYT_QuanitfyImageComponentsHSB_UBv8_template.ijm", true);
+                                        addMacroPanelTab("Veg Index "+vegTabIndex, "Maize_CIMMYT_QuanitfyImageComponentsHSB_UBv8_template.ijm", true, true);
                                         vegTabIndex++;
                                 }
                         });
