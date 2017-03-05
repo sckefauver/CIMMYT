@@ -33,8 +33,8 @@ import cimmyt.maize.ui.tools.FileOpen;
 
 /**
  * 
- * @author George - george.dma@gmail.com
- * <br>
+ * @author George El Haddad (george.dma@gmail.com)
+ * <p>
  * Created on: Sep 10, 2015
  */
 public class BreedPixPanel extends JPanel {

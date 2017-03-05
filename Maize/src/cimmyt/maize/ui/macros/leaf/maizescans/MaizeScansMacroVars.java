@@ -4,8 +4,8 @@ import cimmyt.maize.ui.macros.MacroVars;
 
 /**
  * 
- * @author George - george.dma@gmail.com
- * <br>
+ * @author George El Haddad (george.dma@gmail.com)
+ * <p>
  * Created on: Feb 21, 2017
  */
 public class MaizeScansMacroVars extends MacroVars {

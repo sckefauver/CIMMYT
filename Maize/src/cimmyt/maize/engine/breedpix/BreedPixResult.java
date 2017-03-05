@@ -2,8 +2,8 @@ package cimmyt.maize.engine.breedpix;
 
 /**
  * 
- * @author George - george.dma@gmail.com
- * <br>
+ * @author George El Haddad (george.dma@gmail.com)
+ * <p>
  * Created on: Aug 13, 2015
  *
  */
@@ -139,30 +139,30 @@ public class BreedPixResult {
         public String toString() {
                 StringBuilder sb = new StringBuilder();
                 sb.append(this.getClass().getName())
-                .append("[")
-                .append("HSI=").append(getIhs_h()).append(",").append(getIhs_s()).append(",").append(getIhs_i()).append(";")
-                .append("LAB=").append(getLab_l()).append(",").append(getLab_a()).append(",").append(getLab_b()).append(";")
-                .append("LUV=").append(getLuv_u()).append(",").append(getLuv_v()).append(";")
+                .append('[')
+                .append("HSI=").append(getIhs_h()).append(',').append(getIhs_s()).append(',').append(getIhs_i()).append(';')
+                .append("LAB=").append(getLab_l()).append(',').append(getLab_a()).append(',').append(getLab_b()).append(';')
+                .append("LUV=").append(getLuv_u()).append(',').append(getLuv_v()).append(';')
                 .append("GA=").append(getGa())
-                .append(";")
+                .append(';')
                 .append("GGA=").append(getGga())
-                .append(";")
-                .append("]");
+                .append(';')
+                .append(']');
                 return sb.toString();
         }
         
         public String toPrettyString() {
                 StringBuilder sb = new StringBuilder();
-                sb.append("Hue = ").append(getIhs_h()).append("\n")
-                .append("Saturation = ").append(getIhs_s()).append("\n")
-                .append("Intensity = ").append(getIhs_i()).append("\n")
-                .append("Lightness = ").append(getLab_l()).append("\n")
-                .append("a* = ").append(getLab_a()).append("\n")
-                .append("b* = ").append(getLab_b()).append("\n")
-                .append("u* = ").append(getLuv_u()).append("\n")
-                .append("v* = ").append(getLuv_v()).append("\n")
-                .append("GA = ").append(getGa()).append("\n")
-                .append("GGA = ").append(getGga()).append("\n");
+                sb.append("Hue = ").append(getIhs_h()).append('\n')
+                .append("Saturation = ").append(getIhs_s()).append('\n')
+                .append("Intensity = ").append(getIhs_i()).append('\n')
+                .append("Lightness = ").append(getLab_l()).append('\n')
+                .append("a* = ").append(getLab_a()).append('\n')
+                .append("b* = ").append(getLab_b()).append('\n')
+                .append("u* = ").append(getLuv_u()).append('\n')
+                .append("v* = ").append(getLuv_v()).append('\n')
+                .append("GA = ").append(getGa()).append('\n')
+                .append("GGA = ").append(getGga()).append('\n');
                 return sb.toString();
         }
 }

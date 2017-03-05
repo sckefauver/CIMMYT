@@ -32,8 +32,8 @@ import layout.TableLayout;
 
 /**
  * 
- * @author George - george.dma@gmail.com
- * <br>
+ * @author George El Haddad (george.dma@gmail.com)
+ * <p>
  * Created on: Feb 23, 2017
  */
 public class MaizeFieldsMacroPanel extends JPanel {

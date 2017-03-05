@@ -4,8 +4,8 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 
 /**
  * 
- * @author George - george.dma@gmail.com
- * <br>
+ * @author George El Haddad (george.dma@gmail.com)
+ * <p>
  * Created on: Jun 22, 2015
  *
  */

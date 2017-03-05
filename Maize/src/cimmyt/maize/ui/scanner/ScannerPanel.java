@@ -32,8 +32,8 @@ import cimmyt.maize.ui.processing.ThresholdPanel;
 
 /**
  * 
- * @author George - george.dma@gmail.com
- * <br>
+ * @author George El Haddad (george.dma@gmail.com)
+ * <p>
  * Created on: May 28, 2015
  *
  */

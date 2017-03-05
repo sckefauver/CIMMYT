@@ -17,8 +17,8 @@ import cimmyt.maize.ui.tools.FileSave;
 
 /**
  * 
- * @author George - george.dma@gmail.com
- * <br>
+ * @author George El Haddad (george.dma@gmail.com)
+ * <p>
  * Created on: Mar 27, 2015
  *
  */
