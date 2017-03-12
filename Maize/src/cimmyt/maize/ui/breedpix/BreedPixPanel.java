@@ -253,7 +253,7 @@ public class BreedPixPanel extends JPanel {
                 }
                 
                 StringBuilder resultBuilder = new StringBuilder();
-                resultBuilder.append("Image Name,Intensity, Hue, Saturation, Lightness, a*, b*, u*, v*, GA, GGA");
+                resultBuilder.append("Image Name,Intensity, Hue, Saturation, Lightness, a*, b*, u*, v*, GA, GGA, CSI");
                 resultBuilder.append(System.getProperty("line.separator"));
                 
                 for(int i=0; i < imageFiles.length; i++) {
@@ -329,6 +329,8 @@ public class BreedPixPanel extends JPanel {
                                                 resultBuilder.append(result.getGa());
                                                 resultBuilder.append(',');
                                                 resultBuilder.append(result.getGga());
+                                                resultBuilder.append(',');
+                                                resultBuilder.append(result.getCsi());
                                                 resultBuilder.append(System.getProperty("line.separator"));
                                         }
                                         
