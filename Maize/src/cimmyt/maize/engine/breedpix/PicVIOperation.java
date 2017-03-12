@@ -121,15 +121,6 @@ public class PicVIOperation {
                 // convert meanRGB to CIELuv
                 float[] LuvCoords = CIEXYZtoLuv(xyzCoords, new float[3]);
                 
-                //TODO use a logger for debugging
-//                System.out.println("meanRGB=[" + meanRGB[0] + "," + meanRGB[1] + "," + meanRGB[2] + "]");
-//                System.out.println("HSB=[" + hsiCoords[0] + "," + hsiCoords[1] + "," + hsiCoords[2] + "]");
-//                System.out.println("XYZ=[" + xyzCoords[0] + "," + xyzCoords[1] + "," + xyzCoords[2] + "]");
-//                System.out.println("Lab=[" + LabCoords[0] + "," + LabCoords[1] + "," + LabCoords[2] + "]");
-//                System.out.println("Luv=[" + LuvCoords[0] + "," + LuvCoords[1] + "," + LuvCoords[2] + "]");
-//                System.out.println("minHGA=" + minHGA + ", maxHGA=" + maxHGA + ", minSatGA=" + minSatGA);
-//                System.out.println("countGA=" + countGA + ", countGGA=" + countGGA + ", counts=" + count);
-
                 result.setGa_roi(maskGA);
                 result.setGa(countGA * 1.0d / count);
                 result.setGga_roi(maskGGA);
@@ -142,6 +133,10 @@ public class PicVIOperation {
                 result.setLab_b(LabCoords[2]);
                 result.setLuv_u(LuvCoords[1]);
                 result.setLuv_v(LuvCoords[2]);
+                
+                //CSI calculation based on the research article by Zaman‑Allah et al. Plant Methods (2015) 11:35
+                double csi = 100 * (result.getGa() - result.getGga()) / result.getGa();
+                result.setCsi(csi);
 
                 return result;
         }

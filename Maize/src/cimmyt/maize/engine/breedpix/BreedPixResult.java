@@ -32,6 +32,7 @@ public class BreedPixResult {
         private float luv_v = -1;
         private double ga = -1;
         private double gga = -1;
+        private double csi = -1;
         private PixelMask ga_roi = null;
         private PixelMask gga_roi = null;
         
@@ -118,6 +119,14 @@ public class BreedPixResult {
         public final void setGga(double gga) {
                 this.gga = gga;
         }
+        
+        public final double getCsi() {
+                return csi;
+        }
+        
+        public final void setCsi(double csi) {
+                this.csi = csi;
+        }
 
         public final PixelMask getGa_roi() {
                 return ga_roi;
@@ -147,6 +156,8 @@ public class BreedPixResult {
                 .append(';')
                 .append("GGA=").append(getGga())
                 .append(';')
+                .append("CSI=").append(getCsi())
+                .append(';')
                 .append(']');
                 return sb.toString();
         }
@@ -162,7 +173,8 @@ public class BreedPixResult {
                 .append("u* = ").append(getLuv_u()).append('\n')
                 .append("v* = ").append(getLuv_v()).append('\n')
                 .append("GA = ").append(getGa()).append('\n')
-                .append("GGA = ").append(getGga()).append('\n');
+                .append("GGA = ").append(getGga()).append('\n')
+                .append("CSI = ").append(getCsi()).append('\n');
                 return sb.toString();
         }
 }
