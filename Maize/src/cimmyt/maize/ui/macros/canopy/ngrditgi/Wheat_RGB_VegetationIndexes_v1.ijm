@@ -56,7 +56,7 @@ function action(filename) {
         model aircraft for remote sensing of crop biomass and nitrogen status."
         Precision Agriculture 6.4 (2005): 359-378.
     */
-    imageCalculator("Add create 32-bit", "IMG_(red)","IMG_(blue)");
+    imageCalculator("Subtract create 32-bit", "IMG_(red)","IMG_(blue)");
     rename("ResultR-B");
     imageCalculator("Subtract create 32-bit", "IMG_(red)","IMG_(green)");
     rename("ResultR-G");
