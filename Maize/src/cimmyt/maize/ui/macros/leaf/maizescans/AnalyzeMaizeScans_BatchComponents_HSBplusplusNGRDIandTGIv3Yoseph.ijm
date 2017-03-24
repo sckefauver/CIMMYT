@@ -363,7 +363,7 @@ function action(input, output, filename) {
 	NGRDI = getResult("Mean");
 	
 	//Use image math calculator plus functions to calculate the TGI
-	imageCalculator("Add create 32-bit", "IMG_(red)","IMG_(blue)");
+	imageCalculator("Subtract create 32-bit", "IMG_(red)","IMG_(blue)");
 	rename("ResultR-B");
 	imageCalculator("Subtract create 32-bit", "IMG_(red)","IMG_(green)");
 	rename("ResultR-G");

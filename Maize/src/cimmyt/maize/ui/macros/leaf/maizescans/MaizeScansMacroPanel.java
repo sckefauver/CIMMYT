@@ -23,6 +23,7 @@ import javax.swing.JTextField;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
+import cimmyt.maize.MaizeScanner;
 import cimmyt.maize.ui.MaizeFrame;
 import cimmyt.maize.ui.macros.canopy.maize.MaizeMacroPanel;
 import cimmyt.maize.ui.tools.FileOpen;
@@ -493,7 +494,7 @@ public class MaizeScansMacroPanel extends JPanel {
         }
         
         private final void resultsFileButton_actionPerformed() {
-                saveResultsFile = FileSave.saveFile("Name Results File", (recentDir == null ? new File(System.getProperty("user.dir")) : new File(recentDir)), "Results File (*.csv)", "MaizeLeafScans-GA-GGA-Chlorosis-Necrosis-HSB-CIELAB-NGRDI-TGI-LeafMLN-ResultsV3.csv");
+                saveResultsFile = FileSave.saveFile("Name Results File", (recentDir == null ? new File(System.getProperty("user.dir")) : new File(recentDir)), "Results File (*.csv)", "Maize_LeafScans_v"+MaizeScanner.VERSION+"_Results.csv");
                 if(saveResultsFile != null) {
                         recentDir = saveResultsFile.getParentFile().getAbsolutePath();
                         
