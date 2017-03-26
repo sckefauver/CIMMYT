@@ -2,7 +2,7 @@
 
 ## Already Have FIJI Installed ?
 
-Already having [FIJI] (http://fiji.sc/) installed is great and will lower the time spent getting started.
+Already having [FIJI](http://fiji.sc/) installed is great and will lower the time spent getting started.
 
 Go directly to the __Install CIMMYT Maize Scanner Plugin__ section
 
@@ -14,24 +14,24 @@ This section is for those users who need to install everything in order to get s
 
 The very first step that needs to be done is to make sure that the latest version of Java is installed. Follow the steps below to install the latest version of Java.
 
-* Download & Install Java [Download Here] (https://www.java.com/en/download/)
+* Download & Install Java [Download Here](https://www.java.com/en/download/)
 * Make sure it was installed correctly
-  * Visit Oracle's [Verify Java Version Page] (https://www.java.com/en/download/installed.jsp)
-  * If your browser blocks the Java web-plugin visit the Oracle's [Manual Java Check Page] (https://java.com/en/download/help/version_manual.xml)
+  * Visit Oracle's [Verify Java Version Page](https://www.java.com/en/download/installed.jsp)
+  * If your browser blocks the Java web-plugin visit the Oracle's [Manual Java Check Page](https://java.com/en/download/help/version_manual.xml)
 
 Go to __Install Fiji__ section
   
 ## Install Fiji
 
-Now that the latest version of Java is installed we can proceed with installing [FIJI] (http://fiji.sc/).
+Now that the latest version of Java is installed we can proceed with installing [FIJI](http://fiji.sc/).
 
-1. Download the latest version of FIJI [Here] (http://fiji.sc/#download)
+1. Download the latest version of FIJI [Here](http://fiji.sc/#download)
   * Make sure to download the "No JRE" version
 
 ## Install CIMMYT Maize Scanner Plugin
 
-1. Download the CIMMYT Maize Scanner Jar file [Here] (https://github.com/george-haddad/CIMMYT/releases/download/v1.14/CIMMYT_Maize_Scanner_v1.14.jar)
-2. Download the dependency Jar file *tablelayout.jar* [Here] (https://github.com/george-haddad/CIMMYT/releases/download/v1.14/tablelayout.jar)
+1. Download the CIMMYT Maize Scanner Jar file [Here](https://github.com/george-haddad/CIMMYT/releases/download/v1.14/CIMMYT_Maize_Scanner_v1.14.jar)
+2. Download the dependency Jar file *tablelayout.jar* [Here](https://github.com/george-haddad/CIMMYT/releases/download/v1.14/tablelayout.jar)
 3. Remove any old versions of the CIMMYT Maize Scanner jar file
 4. Place the *CIMMYT_Maize_Scanner_v1.14.jar* file in Fiji's plugins folder `Fiji.app\plugins`
 5. Place the dependency *tablelayout.jar* jar file in Fiji's plugins folder `Fiji.app\plugins`
@@ -45,13 +45,13 @@ Provided are 3 hash codes to check the integrity of the file *CIMMYT_Maize_Scann
 * sha1: 97AF0D01926E07173683577CA039C48F78F67843
 * sha256: DC08BDE9E293CEA511DDD4CC13B40F134960346F0891E41C556FED6157CC5FA1
 
-An online check tool can be used like [Online MD5] (http://onlinemd5.com/)
+An online check tool can be used like [Online MD5](http://onlinemd5.com/)
 
 ## Installing Auto-Run Script
 
 The CIMMYT Maize Scanner Plugin can be auto-run when FIJI starts. To do this follow the instructions below to install the auto-run script.
 
-1. Download the auto-run script file [Here] (https://github.com/george-haddad/CIMMYT/releases/download/v1.14/autorun_cimmyt.ijm)
+1. Download the auto-run script file [Here](https://github.com/george-haddad/CIMMYT/releases/download/v1.14/autorun_cimmyt.ijm)
 2. Create a folder called AutoRun inside Fiji's "macros" folder `\Fiji.app\macros`
 3. Place the downloaded macro __autorun_cimmyt.ijm__ in the AutoRun folder that was created in step 2
 4. Start Fiji and the plugin should auto-run
@@ -98,13 +98,13 @@ BreedPix tab that will process batch images through the breedpix algorithm and o
 -- Project Principal Investigator
 
 # Organizations
-- Funded by [CIMMYT] (http://www.cimmyt.org/)
-- Administered by [University of Barcelona] (http://www.ub.edu/) / [Department of Plant Biology] (http://www.ub.edu/bioveg/index.htm)
+- Funded by [CIMMYT](http://www.cimmyt.org/)
+- Administered by [University of Barcelona] (http://www.ub.edu/) / [Department of Plant Biology](http://www.ub.edu/bioveg/index.htm)
 
 # License
 Copyright 2015 Shawn Carlisle Kefauver
 
 Licensed under the General Public License version 3.0
 
-- [http://www.gnu.org/licenses/gpl-3.0.en.html] (http://www.gnu.org/licenses/gpl-3.0.en.html)
-- [https://tldrlegal.com/license/gnu-general-public-license-v3-(gpl-3)] (https://tldrlegal.com/license/gnu-general-public-license-v3-(gpl-3))
+- [http://www.gnu.org/licenses/gpl-3.0.en.html](http://www.gnu.org/licenses/gpl-3.0.en.html)
+- [https://tldrlegal.com/license/gnu-general-public-license-v3-(gpl-3)](https://tldrlegal.com/license/gnu-general-public-license-v3-(gpl-3))
