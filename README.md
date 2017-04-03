@@ -30,20 +30,20 @@ Now that the latest version of Java is installed we can proceed with installing 
 
 ## Install CIMMYT Maize Scanner Plugin
 
-1. Download the CIMMYT Maize Scanner Jar file [Here](https://github.com/george-haddad/CIMMYT/releases/download/v1.14/CIMMYT_Maize_Scanner_v1.14.jar)
-2. Download the dependency Jar file *tablelayout.jar* [Here](https://github.com/george-haddad/CIMMYT/releases/download/v1.14/tablelayout.jar)
+1. Download the CIMMYT Maize Scanner Jar file [Here](https://github.com/george-haddad/CIMMYT/releases/download/v1.15/CIMMYT_Maize_Scanner_v1.15.jar)
+2. Download the dependency Jar file *tablelayout.jar* [Here](https://github.com/george-haddad/CIMMYT/releases/download/v1.15/tablelayout.jar)
 3. Remove any old versions of the CIMMYT Maize Scanner jar file
-4. Place the *CIMMYT_Maize_Scanner_v1.14.jar* file in Fiji's plugins folder `Fiji.app\plugins`
+4. Place the *CIMMYT_Maize_Scanner_v1.15.jar* file in Fiji's plugins folder `Fiji.app\plugins`
 5. Place the dependency *tablelayout.jar* jar file in Fiji's plugins folder `Fiji.app\plugins`
 6. Start up Fiji
 
 ### Verify Integrity of the downloaded files (optional)
 
-Provided are 3 hash codes to check the integrity of the file *CIMMYT_Maize_Scanner_v1.14.jar*
+Provided are 3 hash codes to check the integrity of the file *CIMMYT_Maize_Scanner_v1.15.jar*
 
-* md5: E7980E99EDDD1778ECEF442E378520BC
-* sha1: 97AF0D01926E07173683577CA039C48F78F67843
-* sha256: DC08BDE9E293CEA511DDD4CC13B40F134960346F0891E41C556FED6157CC5FA1
+* md5: 01938935C39F43C89C1BC76D80C553F0
+* sha1: 8C2FB5BC9723716F1E13DA2C9282223FABFAB183
+* sha256: D658F80F5178183EB03DA5D4022E36DA19ABE67ED26823D5149401BAAC3410E4
 
 An online check tool can be used like [Online MD5](http://onlinemd5.com/)
 
@@ -51,7 +51,7 @@ An online check tool can be used like [Online MD5](http://onlinemd5.com/)
 
 The CIMMYT Maize Scanner Plugin can be auto-run when FIJI starts. To do this follow the instructions below to install the auto-run script.
 
-1. Download the auto-run script file [Here](https://github.com/george-haddad/CIMMYT/releases/download/v1.14/autorun_cimmyt.ijm)
+1. Download the auto-run script file [Here](https://github.com/george-haddad/CIMMYT/releases/download/v1.15/autorun_cimmyt.ijm)
 2. Create a folder called AutoRun inside Fiji's "macros" folder `\Fiji.app\macros`
 3. Place the downloaded macro __autorun_cimmyt.ijm__ in the AutoRun folder that was created in step 2
 4. Start Fiji and the plugin should auto-run
@@ -74,7 +74,7 @@ Canopy macros tab runs a default batch macro on a defined set of images
 
 More macros can be added that will allow the user to customize the macro and add their own vegetation index calculator
 
-![canopy-macros-ngrdi](https://cloud.githubusercontent.com/assets/3069650/23836519/69cecdc8-0782-11e7-8cc8-75469bc84fbf.png)
+![updated macro](https://cloud.githubusercontent.com/assets/3069650/24631670/db3195f6-18c9-11e7-91bf-477e658b9da8.png)
 
 NGRDI & TGI macros to run on a defined set of images
 
