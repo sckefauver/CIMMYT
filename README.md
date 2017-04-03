@@ -26,7 +26,7 @@ Go to __Install Fiji__ section
 Now that the latest version of Java is installed we can proceed with installing [FIJI](http://fiji.sc/).
 
 1. Download the latest version of FIJI [Here](http://fiji.sc/#download)
-  * Make sure to download the "No JRE" version
+   * Make sure to download the "No JRE" version
 
 ## Install CIMMYT Maize Scanner Plugin
 
