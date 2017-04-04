@@ -249,8 +249,6 @@ public class MaizeFieldsMacroPanel extends JPanel {
                 runButton.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                                saveTgiImagesCheckBox_actionPerformed();
-                                saveNgrdiImagesCheckBox_actionPerformed();
                                 runButton_actionPerformed();
                         }
                 });
@@ -287,7 +285,7 @@ public class MaizeFieldsMacroPanel extends JPanel {
                         return;
                 }
                 
-                if(batchOutputDir == null) {
+                if(batchOutputDir == null && isSaveImages()) {
                         JOptionPane.showMessageDialog(this, "Please select the batch outputs folder.", "Select Batch Outputs", JOptionPane.INFORMATION_MESSAGE);
                         return;
                 }
@@ -506,6 +504,16 @@ public class MaizeFieldsMacroPanel extends JPanel {
                         resultsFileField.setText(saveResultsFile.getAbsolutePath());
                         macroVars.setSaveResultsFile(saveResultsFile.getAbsolutePath());
                 }
+        }
+        
+        private final boolean isSaveImages() {
+                return saveNecrosisImagesCheckBox.isSelected() ||
+                        saveChlorosisImagesCheckBox.isSelected() ||
+                        saveGreenerVegImagesCheckBox.isSelected() ||
+                        saveGreenVegImagesCheckBox.isSelected() ||
+                        saveSoilImagesCheckBox.isSelected() ||
+                        saveTgiImagesCheckBox.isSelected() ||
+                        saveNgrdiImagesCheckBox.isSelected();
         }
 }
 

@@ -533,9 +533,9 @@ function isImage(filename) {
        endsWith(toLowerCase(filename), ".tiff") ||
        endsWith(toLowerCase(filename), ".jpg") ||
        endsWith(toLowerCase(filename), ".jpeg")) {
-       return true
+       return true;
     }
     else {
-        return false
+        return false;
     }
 }

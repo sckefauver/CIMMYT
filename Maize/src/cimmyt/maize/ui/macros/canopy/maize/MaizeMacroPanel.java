@@ -366,9 +366,9 @@ public class MaizeMacroPanel extends JPanel {
                                 int carPos = 0;
                                 if(isTemplate) {
                                         try {
-                                                syntaxTextArea.addLineHighlight(33, Color.GREEN);
-                                                syntaxTextArea.addLineHighlight(34, Color.GREEN);
                                                 syntaxTextArea.addLineHighlight(35, Color.GREEN);
+                                                syntaxTextArea.addLineHighlight(36, Color.GREEN);
+                                                syntaxTextArea.addLineHighlight(37, Color.GREEN);
                                         }
                                         catch(BadLocationException e) {
                                                 e.printStackTrace();
