@@ -231,6 +231,7 @@ public class ScannerPanel extends JPanel {
         }
         
         private final boolean checkOptions() {
+                boolean ok = false;
                 if(!enableClaheCheckBox.isSelected() &&
                    !enableSubtractBackgroundCheckBox.isSelected() &&
                    !enableThresholdCheckBox.isSelected() &&
@@ -239,17 +240,19 @@ public class ScannerPanel extends JPanel {
                    !enableParticleAnalyzerDefaultsCheckBox.isSelected() &&
                    !enableRgbMeasureCheckBox.isSelected()) {
                         JOptionPane.showMessageDialog(this, "At least one option must be enabled", "Options Check", JOptionPane.INFORMATION_MESSAGE);
-                        return false;
+                        ok = false;
                 }
                 else {
                         if(!fileSelectPanel.isEmpty()) {
-                                return true;
+                                ok = true;
                         }
                         else {
                                 JOptionPane.showMessageDialog(this, "Image files must be selected", "Options Check", JOptionPane.INFORMATION_MESSAGE);
-                                return false;
+                                ok = false;
                         }
                 }
+                
+                return ok;
         }
         
         private final void analyzeButton_actionPerformed() {

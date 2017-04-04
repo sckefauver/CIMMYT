@@ -18,7 +18,7 @@ import cimmyt.maize.ui.tools.UITool;
  */
 public class MaizeScanner implements PlugIn {
         
-        public static final String VERSION = "1.15";
+        public static final String VERSION = "1.16";
         private MaizeFrame frame = null;
         
         @Override
