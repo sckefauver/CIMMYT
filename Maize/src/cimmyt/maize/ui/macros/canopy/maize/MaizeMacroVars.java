@@ -97,11 +97,14 @@ public class MaizeMacroVars extends MacroVars {
         }
         
         public final boolean isSaveImages() {
+                boolean isSaved = false;
                 if(saveImagesPrev != null) {
-                        return saveImagesPrev.toLowerCase().contains("true");  
+                        isSaved = saveImagesPrev.toLowerCase().contains("true");  
                 }
                 else {
-                        return false;
+                        isSaved = false;
                 }
+                
+                return isSaved;
         }
 }
