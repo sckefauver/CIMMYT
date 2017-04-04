@@ -340,6 +340,10 @@ public class BreedPixPanel extends JPanel {
                                         imageFile = null;
                                         break;
                                 }
+                                
+                                default: {
+                                        break;
+                                }
                         }
                 }
                 
