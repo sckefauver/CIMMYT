@@ -21,7 +21,6 @@ public class MaizeFieldsMacroVars extends MacroVars {
         private String saveNgrdiPrev = null;
         private String saveTgiPrev = null;
         
-        
         public MaizeFieldsMacroVars() {
                 
         }

@@ -287,7 +287,7 @@ public class MaizeScansMacroPanel extends JPanel {
                         return;
                 }
                 
-                if(batchOutputDir == null) {
+                if(batchOutputDir == null && isSaveImages()) {
                         JOptionPane.showMessageDialog(this, "Please select the batch outputs folder.", "Select Batch Outputs", JOptionPane.INFORMATION_MESSAGE);
                         return;
                 }
@@ -506,6 +506,16 @@ public class MaizeScansMacroPanel extends JPanel {
                         resultsFileField.setText(saveResultsFile.getAbsolutePath());
                         macroVars.setSaveResultsFile(saveResultsFile.getAbsolutePath());
                 }
+        }
+        
+        private final boolean isSaveImages() {
+                return saveNecrosisImagesCheckBox.isSelected() ||
+                        saveChlorosisImagesCheckBox.isSelected() ||
+                        saveGreenerVegImagesCheckBox.isSelected() ||
+                        saveGreenVegImagesCheckBox.isSelected() ||
+                        saveScannerImagesCheckBox.isSelected() ||
+                        saveTgiImagesCheckBox.isSelected() ||
+                        saveNgrdiImagesCheckBox.isSelected();
         }
 }
 

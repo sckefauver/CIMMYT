@@ -179,7 +179,7 @@ function action(input, output, filename) {
 
 	//Ccreate threshold classification of chlorosis from HSB Hue
 	//Convert to HSB image space and split channels for processing
-    open(input + filename);
+	open(input + filename);
 	selectWindow(filename);
 	run("HSB Stack");
 	run("32-bit");
@@ -218,7 +218,7 @@ function action(input, output, filename) {
 
 	//Create threshold classification of necrosis from HSB
 	//Convert to HSB image space and split channels for processing
-    open(input + filename);
+	open(input + filename);
 	selectWindow(filename);
 	run("HSB Stack");
 	run("32-bit");
@@ -260,7 +260,7 @@ function action(input, output, filename) {
 	
 	//Use soil image to get leaf area only stats from the HSB and CIELab image spaces
 	run("Clear Results");
-    open(input + filename);
+	open(input + filename);
     
 	//Create HSB images
 	selectWindow(filename);
@@ -289,7 +289,7 @@ function action(input, output, filename) {
 	close();
 
 	//Create Lab images
-    open(input + filename);
+	open(input + filename);
 	selectWindow(filename);
 	run("Lab Stack");
 	selectWindow(filename);
@@ -321,7 +321,7 @@ function action(input, output, filename) {
 
 	//Perform rgb threshold classification and make masks
 	//Convert to separate red, green and blue images for processing
-    open(input + filename);
+	open(input + filename);
 	selectWindow(filename);
 	run("Split Channels");
 	selectWindow(filename + " (red)");
@@ -394,48 +394,48 @@ function action(input, output, filename) {
 	//nested if then else statements R-squared (using separate testing and training data): 0.6695
 	
 	if (NGRDI < -2.56345) {
-        if (chlorosis < 22.79 ) {
-        	if (NGRDI >= 22.79) {
-        		CARTPlotMLN = 2.672;
+		if (chlorosis < 22.79 ) {
+			if (NGRDI >= 22.79) {
+				CARTPlotMLN = 2.672;
 			}
 			else {
-        		CARTPlotMLN = 2.957;
+				CARTPlotMLN = 2.957;
 			}
 		}
 		else {
-        	if (TGI < 12555.37 ) {
-        		CARTPlotMLN = 3.03;
+			if (TGI < 12555.37 ) {
+				CARTPlotMLN = 3.03;
 			}
 			else {
-        		if (NGRDI >= 0.7582 ) {
-        			CARTPlotMLN = 3.228;
+				if (NGRDI >= 0.7582 ) {
+					CARTPlotMLN = 3.228;
 				}
 				else {
-        			CARTPlotMLN = 3.513;
+					CARTPlotMLN = 3.513;
 				}
 			}
 		}
 	}
 	else {
-        if (chlorosis >= 10.79) {
-        	if (NGRDI >= 6.238) {
-        		if (TGI < 9014) {
-        			CARTPlotMLN = 3.359;
+		if (chlorosis >= 10.79) {
+			if (NGRDI >= 6.238) {
+				if (TGI < 9014) {
+					CARTPlotMLN = 3.359;
 				}
 				else {
-        			CARTPlotMLN = 3.859;
+					CARTPlotMLN = 3.859;
 				}
 			}
 			else {
-        		CARTPlotMLN = 3.888;
+				CARTPlotMLN = 3.888;
 			}
 		}
 		else {
-        	if (necrosis < 88.95) {
-        		CARTPlotMLN = 3.941;
+			if (necrosis < 88.95) {
+				CARTPlotMLN = 3.941;
 			}
 			else {
-        		CARTPlotMLN = 4.444;
+				CARTPlotMLN = 4.444;
 			}
 		}
 	}
@@ -443,72 +443,72 @@ function action(input, output, filename) {
 	//Apply Conditional Inference Tree model using terminal mode means
 	if (NGRDI <= -2.582) {
 		if (greenerveg <= 4.607) {
-	    	if (soil <= 30.957) {
-	        	PartyPlotMLN = 4.047;
+			if (soil <= 30.957) {
+				PartyPlotMLN = 4.047;
 			}        
 			else {
-	        	if (TGI <= 8922.66) {
-	        		if (NGRDI <= -6.254) {
-	        			PartyPlotMLN = 3.778;
+				if (TGI <= 8922.66) {
+					if (NGRDI <= -6.254) {
+						PartyPlotMLN = 3.778;
 					}
 					else {
-	        			PartyPlotMLN = 3.435;
+						PartyPlotMLN = 3.435;
 					}
-	        	}
+				}
 				else {
-	        		PartyPlotMLN = 3.957;
+					PartyPlotMLN = 3.957;
 				}
 			}
 		}
 		else {
-	        if (B <= 91.591) {
-	        	PartyPlotMLN = 3.296;
+			if (B <= 91.591) {
+				PartyPlotMLN = 3.296;
 			}
 			else {
-	        	PartyPlotMLN = 3.75;
+				PartyPlotMLN = 3.75;
 			}
 		}
 	}
 	else {
 		if (greenerveg <= 15.634) {
-	    	if (chlorosis <= 26.747) {
-	        	PartyPlotMLN = 3.217;
+			if (chlorosis <= 26.747) {
+				PartyPlotMLN = 3.217;
 			}
 			else {
-	        	if (TGI <= 8163.437) {
-	        		PartyPlotMLN = 3.071;
+				if (TGI <= 8163.437) {
+					PartyPlotMLN = 3.071;
 				}
 				else {
-	        		if (NGRDI <= -0.186) {
-	        			PartyPlotMLN = 3.616;
+					if (NGRDI <= -0.186) {
+						PartyPlotMLN = 3.616;
 					}
 					else {
-	        			PartyPlotMLN = 3.367;
+						PartyPlotMLN = 3.367;
 					}
 				}
 			}
 		}
 		else {
-	    	if (greenerveg <= 42.425) {
-	        	if (chlorosis <= 14.055) {
-	        		if (chlorosis <= 15.127) {
-	        			PartyPlotMLN = 2.77;
+			if (greenerveg <= 42.425) {
+				if (chlorosis <= 14.055) {
+					if (chlorosis <= 15.127) {
+						PartyPlotMLN = 2.77;
 					}
 					else {
-	        			PartyPlotMLN = 2.936;
+						PartyPlotMLN = 2.936;
 					}
 				}
 				else {
-	        		if (B <= 150.539) {
-	        			PartyPlotMLN = 3;
+					if (B <= 150.539) {
+						PartyPlotMLN = 3;
 					}
 					else {
-	        			PartyPlotMLN = 3.327;
+						PartyPlotMLN = 3.327;
 					}
 				}
 			}
 			else {
-	        	PartyPlotMLN = 2.554;
+				PartyPlotMLN = 2.554;
 			}
 		}
 	}
@@ -583,9 +583,9 @@ function isImage(filename) {
        endsWith(toLowerCase(filename), ".tiff") ||
        endsWith(toLowerCase(filename), ".jpg") ||
        endsWith(toLowerCase(filename), ".jpeg")) {
-       return true
+       return true;
     }
     else {
-        return false
+        return false;
     }
 }

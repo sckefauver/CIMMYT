@@ -12,7 +12,9 @@ setBatchMode(true);
 run("Clear Results");
 
 for (i = 0; i < list.length; i++) {
-    action(list[i]);
+	if(isImage(list[i]) {
+		action(list[i]);
+    }
 }
 
 selectWindow("Results")
@@ -94,4 +96,16 @@ function action(filename) {
 	updateResults();
 	
     close();
+}
+
+function isImage(filename) {
+    if(endsWith(toLowerCase(filename), ".tif")||
+       endsWith(toLowerCase(filename), ".tiff") ||
+       endsWith(toLowerCase(filename), ".jpg") ||
+       endsWith(toLowerCase(filename), ".jpeg")) {
+       return true;
+    }
+    else {
+        return false;
+    }
 }
