@@ -19,6 +19,7 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -60,6 +61,9 @@ public class NgrdiAndTgiMacroPanel extends JPanel {
         private JLabel resultsFileLabel = null;
         private JTextField resultsFileField = null;
         private JButton resultsFileButton = null;
+        
+        private JLabel csvDelimiterLabel = null;
+        private JComboBox<String> csvDelimiterList = null;
         
         private JPanel optionsPanel = null;
         
@@ -162,17 +166,26 @@ public class NgrdiAndTgiMacroPanel extends JPanel {
                 
                 //----------------------------------------------------------------
                 
+                csvDelimiterLabel = new JLabel("CSV Delimiter");
+                csvDelimiterLabel.setHorizontalAlignment(JLabel.RIGHT);
+                
+                csvDelimiterList = new JComboBox<>(new String[] {"Comma", "Space", "Tab", "Pipe", "Semi-Colon"});
+                
+                //----------------------------------------------------------------
+                
                 double spacer = 5;
                 double[][] layoutSize = {
-                                //                   0,                        2,                             4
-                                {TableLayout.PREFERRED, spacer, TableLayout.FILL, spacer, TableLayout.PREFERRED},
+                                //                   0,                             2,                        4,                             6
+                                {TableLayout.PREFERRED, spacer, TableLayout.PREFERRED, spacer ,TableLayout.FILL, spacer, TableLayout.PREFERRED},
                                 {TableLayout.PREFERRED, //0
                                  spacer,
                                  TableLayout.PREFERRED, //2
                                  spacer,
                                  TableLayout.PREFERRED, //4
                                  spacer,
-                                 TableLayout.PREFERRED  //6
+                                 TableLayout.PREFERRED , //6
+                                 spacer,
+                                 TableLayout.PREFERRED   //8
                                 }
                 };
                 
@@ -180,17 +193,19 @@ public class NgrdiAndTgiMacroPanel extends JPanel {
                 optionsPanel.setBorder(BorderFactory.createTitledBorder("Macro Options"));
                 optionsPanel.setLayout(new TableLayout(layoutSize));
                 optionsPanel.add(batchInputLabel,        "0, 0");
-                optionsPanel.add(batchInputField,        "2, 0");
-                optionsPanel.add(batchInputButton,       "4, 0");
+                optionsPanel.add(batchInputField,        "2, 0, 4");
+                optionsPanel.add(batchInputButton,       "6, 0");
                 optionsPanel.add(saveNgrdiImagesCheckBox,"0, 2");
-                optionsPanel.add(saveNgrdiImagesField,   "2, 2");
-                optionsPanel.add(saveNgrdiImagesButton,  "4, 2");
+                optionsPanel.add(saveNgrdiImagesField,   "2, 2, 4");
+                optionsPanel.add(saveNgrdiImagesButton,  "6, 2");
                 optionsPanel.add(saveTgiImagesCheckBox,  "0, 4");
-                optionsPanel.add(saveTgiImagesField,     "2, 4");
-                optionsPanel.add(saveTgiImagesButton,    "4, 4");
+                optionsPanel.add(saveTgiImagesField,     "2, 4, 4");
+                optionsPanel.add(saveTgiImagesButton,    "6, 4");
                 optionsPanel.add(resultsFileLabel,       "0, 6");
-                optionsPanel.add(resultsFileField,       "2, 6");
-                optionsPanel.add(resultsFileButton,      "4, 6");
+                optionsPanel.add(resultsFileField,       "2, 6, 4");
+                optionsPanel.add(resultsFileButton,      "6, 6");
+                optionsPanel.add(csvDelimiterLabel,      "0, 8");
+                optionsPanel.add(csvDelimiterList,       "2, 8");
                 
                 //----------------------------------------------------------------
                 
@@ -254,6 +269,9 @@ public class NgrdiAndTgiMacroPanel extends JPanel {
                         JOptionPane.showMessageDialog(this, "Please select a results file location.", "Select Results File", JOptionPane.INFORMATION_MESSAGE);
                         return;
                 }
+                
+                saveTgiImagesCheckBox_actionPerformed();
+                saveNgrdiImagesCheckBox_actionPerformed();
                 
                 Thread macroThread = new Thread(new Runnable() {
                         @Override
@@ -399,13 +417,13 @@ public class NgrdiAndTgiMacroPanel extends JPanel {
         }
         
         private final void resultsFileButton_actionPerformed() {
-                saveResultsFile = FileSave.saveFile("Name Results File", (recentDir == null ? new File(System.getProperty("user.dir")) : new File(recentDir)), "Results File (*.xls)", "Results.xls");
+                saveResultsFile = FileSave.saveFile("Name Results File", (recentDir == null ? new File(System.getProperty("user.dir")) : new File(recentDir)), "Results File (*.csv)", "NGRDI_TGI_Results.csv");
                 if(saveResultsFile != null) {
                         recentDir = saveResultsFile.getParentFile().getAbsolutePath();
                         
-                        if(!saveResultsFile.getName().endsWith(".xls")) {
+                        if(!saveResultsFile.getName().endsWith(".csv")) {
                                 String tmp = saveResultsFile.getAbsolutePath();
-                                saveResultsFile = new File(tmp+".xls");
+                                saveResultsFile = new File(tmp+".csv");
                         }
                         
                         resultsFileField.setText(saveResultsFile.getAbsolutePath());
@@ -428,30 +446,81 @@ public class NgrdiAndTgiMacroPanel extends JPanel {
                                 }
                                 
                                 line2 = br.readLine();
-                                String[] arrLine1 = line1.split("\t");
-                                String[] arrLine2 = line2.split("\t");
+                                String[] arrLine1 = line1.split(",");
+                                String[] arrLine2 = line2.split(",");
                                 resultList.add(new NgrdiTgiPojo(arrLine1[3], arrLine1[1], arrLine1[2], arrLine2[1], arrLine2[2]));
                         }
                         
                         br.close();
                         br = null;
                         
+                        String delimiter = (String)csvDelimiterList.getSelectedItem();
+                        char delim = '\0';
+                        switch(delimiter) {
+                                case "Comma": {
+                                        delim = ',';
+                                        break;
+                                }
+                                
+                                case "Space": {
+                                        delim = ' ';
+                                        break;
+                                }
+                                
+                                case "Tab": {
+                                        delim = '\t';
+                                        break;
+                                }
+                                
+                                case "Pipe": {
+                                        delim = '|';
+                                        break;
+                                }
+                                
+                                case "Semi-Colon": {
+                                        delim = ';';
+                                        break;
+                                }
+                                
+                                default: {
+                                        delim = ',';
+                                        break;
+                                }
+                        }
+                        
+                        StringBuilder csvBuilder = new StringBuilder();
+                        csvBuilder.append("Image Name");
+                        csvBuilder.append(delim);
+                        csvBuilder.append("NGRDI-Mean");
+                        csvBuilder.append(delim);
+                        csvBuilder.append("NGRDI-StDev");
+                        csvBuilder.append(delim);
+                        csvBuilder.append("TGI-Mean");
+                        csvBuilder.append(delim);
+                        csvBuilder.append("TGI-StDev");
+                        csvBuilder.append(System.getProperty("line.separator"));
+                        
                         BufferedWriter bw = new BufferedWriter(new FileWriter(saveResultsFile, false));
-                        bw.write("Image Name\tNGRDI-Mean\tNGRDI-StDev\tTGI-Mean\tTGI-StDev"+System.getProperty("line.separator"));
+                        bw.write(csvBuilder.toString());
+                        bw.flush();
+                        
                         for(int i=0; i < resultList.size(); i++) {
                                 NgrdiTgiPojo pojo = resultList.get(i);
-                                bw.write(pojo.getImageName());
-                                bw.write('\t');
-                                bw.write(pojo.getnMean());
-                                bw.write('\t');
-                                bw.write(pojo.getnStd());
-                                bw.write('\t');
-                                bw.write(pojo.gettMean());
-                                bw.write('\t');
-                                bw.write(pojo.gettStd());
-                                bw.write(System.getProperty("line.separator"));
+                                csvBuilder = new StringBuilder();
+                                csvBuilder.append(pojo.getImageName());
+                                csvBuilder.append(delim);
+                                csvBuilder.append(pojo.getnMean());
+                                csvBuilder.append(delim);
+                                csvBuilder.append(pojo.getnStd());
+                                csvBuilder.append(delim);
+                                csvBuilder.append(pojo.gettMean());
+                                csvBuilder.append(delim);
+                                csvBuilder.append(pojo.gettStd());
+                                csvBuilder.append(System.getProperty("line.separator"));
+                                bw.write(csvBuilder.toString());
                                 bw.flush();
                         }
+                        
                         
                         bw.close();
                         bw = null;

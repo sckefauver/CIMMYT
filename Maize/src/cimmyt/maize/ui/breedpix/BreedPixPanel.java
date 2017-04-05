@@ -18,6 +18,7 @@ import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -53,6 +54,9 @@ public class BreedPixPanel extends JPanel {
         private JLabel resultsFileLabel = null;
         private JTextField resultsFileField = null;
         private JButton resultsFileButton = null;
+        
+        private JLabel csvDelimiterLabel = null;
+        private JComboBox<String> csvDelimiterList = null;
         
         private JPanel optionsPanel = null;
         
@@ -118,7 +122,7 @@ public class BreedPixPanel extends JPanel {
                 
               //----------------------------------------------------------------
                 
-                resultsFileLabel = new JLabel("Results File:");
+                resultsFileLabel = new JLabel("CSV Results:");
                 resultsFileLabel.setHorizontalAlignment(JLabel.RIGHT);
                 
                 resultsFileField = new JTextField(20);
@@ -135,6 +139,13 @@ public class BreedPixPanel extends JPanel {
                 
               //----------------------------------------------------------------
                 
+                csvDelimiterLabel = new JLabel("CSV Delimiter");
+                csvDelimiterLabel.setHorizontalAlignment(JLabel.RIGHT);
+                
+                csvDelimiterList = new JComboBox<>(new String[] {"Comma", "Space", "Tab", "Pipe", "Semi-Colon"});
+                
+              //----------------------------------------------------------------
+                
                 double spacer = 5;
                 double[][] layoutSize = {
                                 //                   0,                             2,                        4,                             6
@@ -145,9 +156,7 @@ public class BreedPixPanel extends JPanel {
                                  spacer,
                                  TableLayout.PREFERRED, //4
                                  spacer,
-                                 TableLayout.PREFERRED, //6
-                                 spacer,
-                                 TableLayout.PREFERRED  //8
+                                 TableLayout.PREFERRED  //6
                                 }
                 };
                 
@@ -157,13 +166,15 @@ public class BreedPixPanel extends JPanel {
                 optionsPanel.add(batchInputLabel,      "0, 0");
                 optionsPanel.add(batchInputField,      "2, 0, 4");
                 optionsPanel.add(batchInputButton,     "6, 0");
-                optionsPanel.add(saveGaImageCheckBox,  "0, 2");
-                optionsPanel.add(saveGgaImageCheckBox, "2, 2");
-                optionsPanel.add(saveImageField,       "4, 2");
-                optionsPanel.add(saveImageButton,      "6, 2");
-                optionsPanel.add(resultsFileLabel,     "0, 4");
-                optionsPanel.add(resultsFileField,     "2, 4, 4");
-                optionsPanel.add(resultsFileButton,    "6, 4");
+                optionsPanel.add(resultsFileLabel,     "0, 2");
+                optionsPanel.add(resultsFileField,     "2, 2, 4");
+                optionsPanel.add(resultsFileButton,    "6, 2");
+                optionsPanel.add(csvDelimiterLabel,    "0, 4");
+                optionsPanel.add(csvDelimiterList,     "2, 4");
+                optionsPanel.add(saveGaImageCheckBox,  "0, 6");
+                optionsPanel.add(saveGgaImageCheckBox, "2, 6");
+                optionsPanel.add(saveImageField,       "4, 6");
+                optionsPanel.add(saveImageButton,      "6, 6");
                 
                 runButton = new JButton("Run BreedPix");
                 runButton.addActionListener(new ActionListener() {
@@ -248,13 +259,70 @@ public class BreedPixPanel extends JPanel {
                 String ext = null;
                 String fileName = null;
                 String imagePath = null;
+                
                 if(saveImageDir != null) {
                         imagePath = saveImageDir.getAbsolutePath();
                 }
                 
-                StringBuilder resultBuilder = new StringBuilder();
-                resultBuilder.append("Image Name,Intensity, Hue, Saturation, Lightness, a*, b*, u*, v*, GA, GGA, CSI");
-                resultBuilder.append(System.getProperty("line.separator"));
+                String delimiter = (String)csvDelimiterList.getSelectedItem();
+                char delim = '\0';
+                switch(delimiter) {
+                        case "Comma": {
+                                delim = ',';
+                                break;
+                        }
+                        
+                        case "Space": {
+                                delim = ' ';
+                                break;
+                        }
+                        
+                        case "Tab": {
+                                delim = '\t';
+                                break;
+                        }
+                        
+                        case "Pipe": {
+                                delim = '|';
+                                break;
+                        }
+                        
+                        case "Semi-Colon": {
+                                delim = ';';
+                                break;
+                        }
+                        
+                        default: {
+                                delim = ',';
+                                break;
+                        }
+                }
+                
+                StringBuilder csvBuilder = new StringBuilder();
+                csvBuilder.append("Image Name");
+                csvBuilder.append(delim);
+                csvBuilder.append("Intensity");
+                csvBuilder.append(delim);
+                csvBuilder.append("Hue");
+                csvBuilder.append(delim);
+                csvBuilder.append("Saturation");
+                csvBuilder.append(delim);
+                csvBuilder.append("Lightness");
+                csvBuilder.append(delim);
+                csvBuilder.append("a*");
+                csvBuilder.append(delim);
+                csvBuilder.append("b*");
+                csvBuilder.append(delim);
+                csvBuilder.append("u*");
+                csvBuilder.append(delim);
+                csvBuilder.append("v*");
+                csvBuilder.append(delim);
+                csvBuilder.append("GA");
+                csvBuilder.append(delim);
+                csvBuilder.append("GGA");
+                csvBuilder.append(delim);
+                csvBuilder.append("CSI");
+                csvBuilder.append(System.getProperty("line.separator"));
                 
                 for(int i=0; i < imageFiles.length; i++) {
                         imageFile = imageFiles[i];
@@ -308,30 +376,30 @@ public class BreedPixPanel extends JPanel {
                                                         }
                                                 }
                                                 
-                                                resultBuilder.append(fileName).append('.').append(ext);
-                                                resultBuilder.append(',');
-                                                resultBuilder.append(result.getIhs_i());
-                                                resultBuilder.append(',');
-                                                resultBuilder.append(result.getIhs_h());
-                                                resultBuilder.append(',');
-                                                resultBuilder.append(result.getIhs_s());
-                                                resultBuilder.append(',');
-                                                resultBuilder.append(result.getLab_l());
-                                                resultBuilder.append(',');
-                                                resultBuilder.append(result.getLab_a());
-                                                resultBuilder.append(',');
-                                                resultBuilder.append(result.getLab_b());
-                                                resultBuilder.append(',');
-                                                resultBuilder.append(result.getLuv_u());
-                                                resultBuilder.append(',');
-                                                resultBuilder.append(result.getLuv_v());
-                                                resultBuilder.append(',');
-                                                resultBuilder.append(result.getGa());
-                                                resultBuilder.append(',');
-                                                resultBuilder.append(result.getGga());
-                                                resultBuilder.append(',');
-                                                resultBuilder.append(result.getCsi());
-                                                resultBuilder.append(System.getProperty("line.separator"));
+                                                csvBuilder.append(fileName).append('.').append(ext);
+                                                csvBuilder.append(delim);
+                                                csvBuilder.append(result.getIhs_i());
+                                                csvBuilder.append(delim);
+                                                csvBuilder.append(result.getIhs_h());
+                                                csvBuilder.append(delim);
+                                                csvBuilder.append(result.getIhs_s());
+                                                csvBuilder.append(delim);
+                                                csvBuilder.append(result.getLab_l());
+                                                csvBuilder.append(delim);
+                                                csvBuilder.append(result.getLab_a());
+                                                csvBuilder.append(delim);
+                                                csvBuilder.append(result.getLab_b());
+                                                csvBuilder.append(delim);
+                                                csvBuilder.append(result.getLuv_u());
+                                                csvBuilder.append(delim);
+                                                csvBuilder.append(result.getLuv_v());
+                                                csvBuilder.append(delim);
+                                                csvBuilder.append(result.getGa());
+                                                csvBuilder.append(delim);
+                                                csvBuilder.append(result.getGga());
+                                                csvBuilder.append(delim);
+                                                csvBuilder.append(result.getCsi());
+                                                csvBuilder.append(System.getProperty("line.separator"));
                                         }
                                         
                                         scaledRenderedImage = null;
@@ -347,7 +415,7 @@ public class BreedPixPanel extends JPanel {
                         }
                 }
                 
-                printResults(resultBuilder.toString());
+                printResults(csvBuilder.toString());
         }
         
         private final void printResults(String results) {
@@ -359,9 +427,9 @@ public class BreedPixPanel extends JPanel {
                         fw = null;
                 }
                 catch(IOException ioe) {
-                        IJ.log("Error saving results file: " + saveResultsFile.getAbsoluteFile());
+                        IJ.log("Error saving csv file: " + saveResultsFile.getAbsoluteFile());
                         IJ.log("Error: "+ioe.getMessage());
-                        IJ.error("I/O Error", "There was an error while saving the results file.");
+                        IJ.error("I/O Error", "There was an error while saving the csv file.");
                 }
         }
         
@@ -413,13 +481,13 @@ public class BreedPixPanel extends JPanel {
         }
         
         private final void resultsFileButton_actionPerformed() {
-                saveResultsFile = FileOpen.getFile("Name Results File", (recentDir == null ? System.getProperty("user.dir") : recentDir), JFileChooser.FILES_AND_DIRECTORIES , "Results File (*.xls)", "xls");
+                saveResultsFile = FileOpen.getFile("Name Results File", (recentDir == null ? System.getProperty("user.dir") : recentDir), JFileChooser.FILES_AND_DIRECTORIES , "Results File (*.csv)", "csv");
                 if(saveResultsFile != null) {
                         recentDir = saveResultsFile.getParentFile().getAbsolutePath();
                         
-                        if(!saveResultsFile.getName().endsWith(".xls")) {
+                        if(!saveResultsFile.getName().endsWith(".csv")) {
                                 String tmp = saveResultsFile.getAbsolutePath();
-                                saveResultsFile = new File(tmp+".xls");
+                                saveResultsFile = new File(tmp+".csv");
                         }
                         
                         resultsFileField.setText(saveResultsFile.getAbsolutePath());

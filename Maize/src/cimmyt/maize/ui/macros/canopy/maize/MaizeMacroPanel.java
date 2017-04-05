@@ -1,6 +1,5 @@
 package cimmyt.maize.ui.macros.canopy.maize;
 
-import ij.IJ;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -33,7 +32,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicButtonUI;
 import javax.swing.text.BadLocationException;
-import layout.TableLayout;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
@@ -41,6 +39,8 @@ import cimmyt.maize.ui.MaizeFrame;
 import cimmyt.maize.ui.macros.MacroVars;
 import cimmyt.maize.ui.tools.FileOpen;
 import cimmyt.maize.ui.tools.FileSave;
+import ij.IJ;
+import layout.TableLayout;
 
 /**
  * 
@@ -98,7 +98,7 @@ public class MaizeMacroPanel extends JPanel {
                         }
                 });
                 
-                //----------------------------------------------------------------
+                //-----------------------------------------------------------------
                 
                 saveImagesCheckBox = new JCheckBox("Save HSB Images?", false);
                 saveImagesCheckBox.setFocusable(false);
@@ -156,13 +156,14 @@ public class MaizeMacroPanel extends JPanel {
                 
                 double spacer = 5;
                 double[][] layoutSize = {
-                                //                   0,                        2,                             4
+                                //                   0,                        2,                            4
                                 {TableLayout.PREFERRED, spacer, TableLayout.FILL, spacer, TableLayout.PREFERRED},
-                                {TableLayout.PREFERRED, //0
+                                {
+                                 TableLayout.PREFERRED, //0
                                  spacer,
                                  TableLayout.PREFERRED, //2
                                  spacer,
-                                 TableLayout.PREFERRED //4
+                                 TableLayout.PREFERRED  //4
                                 }
                 };
                 
@@ -309,13 +310,13 @@ public class MaizeMacroPanel extends JPanel {
         }
         
         private final void resultsFileButton_actionPerformed() {
-                saveResultsFile = FileSave.saveFile("Name Results File", (recentDir == null ? new File(System.getProperty("user.dir")) : new File(recentDir)), "Results File (*.xls)", "Results.xls");
+                saveResultsFile = FileSave.saveFile("Name Results File", (recentDir == null ? new File(System.getProperty("user.dir")) : new File(recentDir)), "Results File (*.csv)", "Maize_Results.csv");
                 if(saveResultsFile != null) {
                         recentDir = saveResultsFile.getParentFile().getAbsolutePath();
                         
-                        if(!saveResultsFile.getName().endsWith(".xls")) {
+                        if(!saveResultsFile.getName().endsWith(".csv")) {
                                 String tmp = saveResultsFile.getAbsolutePath();
-                                saveResultsFile = new File(tmp+".xls");
+                                saveResultsFile = new File(tmp+".csv");
                         }
                         
                         resultsFileField.setText(saveResultsFile.getAbsolutePath());

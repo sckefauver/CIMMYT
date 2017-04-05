@@ -4,19 +4,19 @@ setBatchMode(true);
 
 run("Clear Results");
 
-input = "$P{batch_input}";
-saveImages = $P{save_images};
-imagesDir = "$P{save_images_dir}";
-list = getFileList(input);
+var input = "$P{batch_input}";
+var saveImages = $P{save_images};
+var imagesDir = "$P{save_images_dir}";
+var list = getFileList(input);
 
 for (i = 0; i < list.length; i++) {
-	if(isImage(list[i]) {
+	if(isImage(list[i])) {
 		action(list[i]);
     }
 }
 
 selectWindow("Results")
-run("Input/Output...", "jpeg=100 gif=-1 file=.xls use_file copy_column copy_row save_column save_row");
+run("Input/Output...", "jpeg=100 gif=-1 file=.csv use_file copy_column copy_row save_column save_row");
 saveAs("Results","$P{save_results_file}");
 run("Close");
 call("java.lang.System.gc");
