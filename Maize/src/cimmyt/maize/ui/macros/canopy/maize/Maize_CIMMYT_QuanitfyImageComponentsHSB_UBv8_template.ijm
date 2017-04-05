@@ -10,7 +10,7 @@ var imagesDir = "$P{save_images_dir}";
 var list = getFileList(input);
 
 for (i = 0; i < list.length; i++) {
-	if(isImage(list[i]) {
+	if(isImage(list[i])) {
 		action(list[i]);
     }
 }

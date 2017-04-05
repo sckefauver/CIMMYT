@@ -10,7 +10,7 @@ setBatchMode(true);
 run("Clear Results");
 
 for (i = 0; i < list.length; i++) {
-	if(isImage(list[i]) {
+	if(isImage(list[i])) {
 		action(list[i]);
     }
 }
