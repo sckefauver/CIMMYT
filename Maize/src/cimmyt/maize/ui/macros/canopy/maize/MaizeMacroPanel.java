@@ -98,7 +98,7 @@ public class MaizeMacroPanel extends JPanel {
                         }
                 });
                 
-                //----------------------------------------------------------------
+                //-----------------------------------------------------------------
                 
                 saveImagesCheckBox = new JCheckBox("Save HSB Images?", false);
                 saveImagesCheckBox.setFocusable(false);

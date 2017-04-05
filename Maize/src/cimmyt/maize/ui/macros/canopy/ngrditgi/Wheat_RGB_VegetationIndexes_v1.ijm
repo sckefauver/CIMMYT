@@ -12,9 +12,7 @@ setBatchMode(true);
 run("Clear Results");
 
 for (i = 0; i < list.length; i++) {
-	if(isImage(list[i])) {
-		action(list[i]);
-    }
+	action(list[i]);
 }
 
 selectWindow("Results")
@@ -73,7 +71,6 @@ function action(filename) {
 
     run("Set Measurements...", "mean standard redirect=None decimal=3");
     run("Input/Output...", "jpeg=85 gif=-1 file=.csv use_file copy_column copy_row save_column save_row");
-    
     selectWindow("IMG_NGRDI");
     run("Select All");
     run("Measure");
@@ -95,18 +92,6 @@ function action(filename) {
 	setResult("Image", i+i, imageName);
 	setResult("Image", i+(i+1), imageName);
 	updateResults();
-	
-    close();
-}
 
-function isImage(filename) {
-    if(endsWith(toLowerCase(filename), ".tif")||
-       endsWith(toLowerCase(filename), ".tiff") ||
-       endsWith(toLowerCase(filename), ".jpg") ||
-       endsWith(toLowerCase(filename), ".jpeg")) {
-       return true;
-    }
-    else {
-        return false;
-    }
+	close();
 }
