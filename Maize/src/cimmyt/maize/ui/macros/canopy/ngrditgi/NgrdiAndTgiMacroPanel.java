@@ -399,13 +399,13 @@ public class NgrdiAndTgiMacroPanel extends JPanel {
         }
         
         private final void resultsFileButton_actionPerformed() {
-                saveResultsFile = FileSave.saveFile("Name Results File", (recentDir == null ? new File(System.getProperty("user.dir")) : new File(recentDir)), "Results File (*.xls)", "Results.xls");
+                saveResultsFile = FileSave.saveFile("Name Results File", (recentDir == null ? new File(System.getProperty("user.dir")) : new File(recentDir)), "Results File (*.csv)", "NGRDI_TGI_Results.csv");
                 if(saveResultsFile != null) {
                         recentDir = saveResultsFile.getParentFile().getAbsolutePath();
                         
-                        if(!saveResultsFile.getName().endsWith(".xls")) {
+                        if(!saveResultsFile.getName().endsWith(".csv")) {
                                 String tmp = saveResultsFile.getAbsolutePath();
-                                saveResultsFile = new File(tmp+".xls");
+                                saveResultsFile = new File(tmp+".csv");
                         }
                         
                         resultsFileField.setText(saveResultsFile.getAbsolutePath());

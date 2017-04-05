@@ -1,12 +1,12 @@
 // Macro to batch process and calculate the Normalized Green Red Difference Index (NGRDI)
 // and Triangular Greeness (TGI) vegetation indexes from RGB components based on Hunt et al. 2014. 
 
-input = "$P{batch_input}";
-ngdriDir = "$P{save_ngrdi_dir}";
-trgiDir = "$P{save_tgi_dir}";
-saveNgrdi = $P{save_ngrdi_images};
-saveTgi = $P{save_tgi_images};
-list = getFileList(input);
+var input = "$P{batch_input}";
+var ngdriDir = "$P{save_ngrdi_dir}";
+var trgiDir = "$P{save_tgi_dir}";
+var saveNgrdi = $P{save_ngrdi_images};
+var saveTgi = $P{save_tgi_images};
+var list = getFileList(input);
 
 setBatchMode(true);
 run("Clear Results");
@@ -72,7 +72,8 @@ function action(filename) {
     close("IMG_(*");
 
     run("Set Measurements...", "mean standard redirect=None decimal=3");
-    run("Input/Output...", "jpeg=85 gif=-1 file=.xls use_file copy_column copy_row save_column save_row");
+    run("Input/Output...", "jpeg=85 gif=-1 file=.csv use_file copy_column copy_row save_column save_row");
+    
     selectWindow("IMG_NGRDI");
     run("Select All");
     run("Measure");

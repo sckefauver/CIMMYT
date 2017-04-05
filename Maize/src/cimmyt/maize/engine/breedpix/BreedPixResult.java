@@ -9,30 +9,17 @@ package cimmyt.maize.engine.breedpix;
  */
 public class BreedPixResult {
         
-//        RESULT_IHS_I = "Intensity";
-//        RESULT_IHS_H = "Hue";
-//        RESULT_IHS_S = "Saturation";
-//        RESULT_Lab_L = "Lightness";
-//        RESULT_Lab_a = "a*";
-//        RESULT_Lab_b = "b*";
-//        RESULT_Luv_u = "u*";
-//        RESULT_Luv_v = "v*";
-//        RESULT_GA = "GA";
-//        RESULT_GGA = "GGA";
-//        RESULT_GA_ROI = "GA_ROI";
-//        RESULT_GGA_ROI = "GGA_ROI";
-        
-        private float ihs_i = -1;
-        private float ihs_h = -1;
-        private float ihs_s = -1;
-        private float lab_l = -1;
-        private float lab_a = -1;
-        private float lab_b = -1;
-        private float luv_u = -1;
-        private float luv_v = -1;
-        private double ga = -1;
-        private double gga = -1;
-        private double csi = -1;
+        private float ihs_i = -1;       // Intensity
+        private float ihs_h = -1;       // Hue
+        private float ihs_s = -1;       // Saturation
+        private float lab_l = -1;       // Lightness
+        private float lab_a = -1;       // a*
+        private float lab_b = -1;       // b*
+        private float luv_u = -1;       // u*
+        private float luv_v = -1;       // v*
+        private double ga = -1;         // Green Area
+        private double gga = -1;        // Greener Green Area
+        private double csi = -1;        // CSI calculation (Zaman‑Allah et al. Plant Methods (2015) 11:35)
         private PixelMask ga_roi = null;
         private PixelMask gga_roi = null;
         
