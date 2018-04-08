@@ -92,16 +92,19 @@ BreedPix tab that will process batch images through the breedpix algorithm and o
 Customize your CSV output with delimiter of your choice
 
 # Authors
+
 - George El-Haddad
    - Software Engineer
 - Dr. Shawn Kefauver
    - Project Principal Investigator
 
 # Organizations
+
 - Funded by [CIMMYT](http://www.cimmyt.org/)
 - Administered by [University of Barcelona](http://www.ub.edu/) / [Department of Plant Biology](http://www.ub.edu/bioveg/index.htm)
 
 # License
+
 Copyright 2015 Shawn Carlisle Kefauver
 
 Licensed under the General Public License version 3.0
