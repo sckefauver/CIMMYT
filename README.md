@@ -1,4 +1,4 @@
-# CIMMYT
+# CIMMYT MaizeScanner
 
 ## Already Have FIJI Installed ?
 
