@@ -30,8 +30,8 @@ Now that the latest version of Java is installed we can proceed with installing 
 
 ## Install CIMMYT Maize Scanner Plugin
 
-1. Download the CIMMYT Maize Scanner Jar file [Here](https://github.com/george-haddad/CIMMYT/releases/download/v1.16/CIMMYT_Maize_Scanner.jar)
-2. Download the dependency Jar file *tablelayout.jar* [Here](https://github.com/george-haddad/CIMMYT/releases/download/v1.16/tablelayout.jar)
+1. Download the CIMMYT Maize Scanner Jar file [Here](https://github.com/sckefauver/CIMMYT/releases/download/v1.16/CIMMYT_Maize_Scanner.jar)
+2. Download the dependency Jar file *tablelayout.jar* [Here](https://github.com/sckefauver/CIMMYT/releases/download/v1.16/tablelayout.jar)
 3. Place the *CIMMYT_Maize_Scanner.jar* file in Fiji's plugins folder `Fiji.app\plugins`
 4. Overwrite any existing version of the jar when or if prompted to
 5. Place the dependency *tablelayout.jar* jar file in Fiji's plugins folder `Fiji.app\plugins`
