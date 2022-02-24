@@ -51,7 +51,7 @@ An online check tool can be used like [Online MD5](http://onlinemd5.com/)
 
 The CIMMYT Maize Scanner Plugin can be auto-run when FIJI starts. To do this follow the instructions below to install the auto-run script.
 
-1. Download the auto-run script file [Here](https://github.com/george-haddad/CIMMYT/releases/download/v1.16/autorun_cimmyt.ijm)
+1. Download the auto-run script file [Here](https://github.com/sckefauver/CIMMYT/blob/master/autorun_cimmyt.ijm)
 2. Create a folder called AutoRun inside Fiji's "macros" folder `\Fiji.app\macros`
 3. Place the downloaded macro __autorun_cimmyt.ijm__ in the AutoRun folder that was created in step 2
 4. Start Fiji and the plugin should auto-run
